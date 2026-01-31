@@ -31,6 +31,8 @@ function _init()
   sheep_mgr:spawn()
   physics = Physics:new()
 
+  --__update = update_title
+  --__draw = draw_title
   __update = update_game
   __draw = draw_game
   _camera_init()
