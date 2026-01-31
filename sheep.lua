@@ -52,7 +52,7 @@ function new_sheep(x, y)
     state = SheepState.Wait,
     state_ttl = rnd(3),
     collisionCirc = function(self)
-      return Circ.fromCenterRadius(self.pos:add(v2(4,4)),6)
+      return Circ.fromCenterRadius(self.pos:add(v2(4,4)),4)
     end,
     intention = function(self)
       if self.tgt_pos == nil then
@@ -71,7 +71,7 @@ function new_sheep(x, y)
         return
       end
       if abs(new_pos.x) <= 1 and abs(new_pos.y) <=1 then
-        printh("Arrived!")
+        -- printh("Arrived!")
         self.state = SheepState.Wait
         self.state_f = sheep_state_wait
         self.state_ttl = rnd(2)

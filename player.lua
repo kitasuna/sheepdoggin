@@ -54,7 +54,10 @@ player = {
             local i, j=1, 1
             while(objects[i]) do
                 if objects[i]:update() then
-                    if(i!=j) objects[j] = objects[i] objects[i] = nil
+                    if i != j then
+                        objects[j] = objects[i]
+                        objects[i] = nil
+                    end
                     j += 1
                 else
                     objects[i] = nil
@@ -71,8 +74,8 @@ player = {
 
             self.dx = mid(-self.max_dx, self.dx, self.max_dx)
             self.dy = mid(-self.max_dy, self.dy, self.max_dy)
-            self.x += self.dx
-            self.y += self.dy
+            -- self.x += self.dx
+            -- self.y += self.dy
     
      --masks
             if self.mask == "dog" then
@@ -123,13 +126,35 @@ player = {
         end,
 
         draw = function(self)
-            cls()
             spr(self.sprite, self.x, self.y)
             for b in all(objects) do
                 b:draw()
             end
             print(player.mask, 0, 0)
-        end
+        end,
+
+        collisionCirc = function(self)
+            local pos = v2(self.x, self.y)
+            return Circ.fromCenterRadius(pos:add(v2(4,4)),4)
+        end,
+
+        intention = function(self)
+
+          local delta = v2(
+            self.dx,
+            self.dy
+          )
+          printh("Tried to move "..delta.x..", "..delta.y)
+          return delta
+        end,
+        resolve = function(self, new_pos)
+            if abs(new_pos.x) <= 0.2 and abs(new_pos.y) <= 0.2 then
+                return
+            end
+              printh("Got new pos "..new_pos.x..", "..new_pos.y)
+            self.x += new_pos.x
+            self.y += new_pos.y
+        end,
     }
 
 -- handling barks
