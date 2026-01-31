@@ -11,6 +11,9 @@ poke(0x5f2e, 1)
 #include player.lua
 #include sheep.lua
 #include vector2.lua
+#include physics.lua
+#include camerafollow.lua
+#include animation.lua
 
 -- globals for controlling time stuff
 _now = 0
@@ -27,6 +30,8 @@ function _init()
 
   __update = update_game
   __draw = draw_game
+  _camera_init()
+  _init_animation()
 end
 
 function _update60()
@@ -34,10 +39,14 @@ function _update60()
   local dt = _now - _last_ts
   __update(dt)
   _last_ts = _now
+  _camera_update()
+  _update_animation()
 end
 
 function _draw()
+  _camera_draw()
   __draw()
+  _draw_animation()
 end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
