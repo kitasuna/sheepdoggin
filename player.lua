@@ -41,8 +41,8 @@ player = {
             end
             if btnp(4) then
                 if self.mask == "dog" then
-                    self.mask = "chihuahua"
-                elseif self.mask == "chihuahua" then
+                    self.mask = "mouse"
+                elseif self.mask == "mouse" then
                     self.mask = "duck"
                 elseif self.mask == "duck" then
                     self.mask = "fish"
@@ -89,7 +89,7 @@ player = {
                 self.text = "bark"
                 self.sound = 2
             end
-            if self.mask == "chihuahua" then
+            if self.mask == "mouse" then
                 self.acc = 0.5
                 self.max_dx = 2
                 self.max_dy = 2
@@ -97,7 +97,7 @@ player = {
                 self.sprite = 130
                 self.friction = 0.85
                 self.flop = 0
-                self.text = "yap"
+                self.text = "squeak"
                 self.sound = 1
             end
             if self.mask == "duck" then
