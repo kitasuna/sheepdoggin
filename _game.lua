@@ -1,7 +1,12 @@
 function update_game(dt)
+  SheepMgr:update(dt)
 end
 
-function draw_game(dt)
+function draw_game()
   cls()
-  print("you sly dog, you", 32, 64)
+  
+  rectfill(0,0,128,128,3)
+  palt(0,false)
+  SheepMgr:draw()
+  palt(0,true)
 end
