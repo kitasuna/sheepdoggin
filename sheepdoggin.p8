@@ -47,9 +47,9 @@ function _update60()
 end
 
 function _draw()
-  _camera_draw()
   __draw()
-  _draw_animation()
+  --_camera_draw()
+  --_draw_animation()
 end
 __gfx__
 00000000888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888
