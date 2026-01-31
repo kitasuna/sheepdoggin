@@ -13,7 +13,14 @@ function Circ.fromCenterRadius(center, radius)
 end
 
 function Circ:collides(other)
-  return (self.center - other.center):len() < self.radius + other.radius
+  local delta = self.center - other.center
+  local radiusSum = self.radius + other.radius
+  -- Check for the obvious case of one of the axes being greater than the
+  -- combined radii.
+  if abs(delta.x) > radiusSum or abs(delta.y) > radiusSum then
+    return false
+  end
+  return delta:len() < self.radius + other.radius
 end
 
 -- Returns the vector that would move the circle out of collision with `other`.
