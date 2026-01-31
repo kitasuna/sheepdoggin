@@ -1,6 +1,7 @@
 function update_game(dt)
   player:update()
-  SheepMgr:update(dt)
+  sheep_mgr:update(dt)
+  physics:resolve(sheep_mgr.sheep)
 end
 
 function draw_game()
@@ -9,6 +10,6 @@ function draw_game()
   
   rectfill(0,0,128,128,7)
   palt(0,false)
-  SheepMgr:draw()
+  sheep_mgr:draw()
   palt(0,true)
 end
