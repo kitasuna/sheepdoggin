@@ -17,7 +17,7 @@ function Circ:collides(other)
   local radiusSum = self.radius + other.radius
   -- Check for the obvious case of one of the axes being greater than the
   -- combined radii.
-  if delta.x > radiusSum or delta.y > radiusSum then
+  if abs(delta.x) > radiusSum or abs(delta.y) > radiusSum then
     return false
   end
   return delta:len() < self.radius + other.radius
