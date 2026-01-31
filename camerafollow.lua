@@ -24,5 +24,4 @@ function _camera_draw()
 
  cls(1)
  map(0,0,0,0,32,32)
- spr(129,x_follow,y_follow)
 end

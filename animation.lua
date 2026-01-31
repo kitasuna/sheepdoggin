@@ -31,21 +31,21 @@ function _draw_animation()
   -- moving animation
   if moving then
     if flr(p.frame/p.anim_delay)%2==0 then
-      sprite=129
+      sprite=145
     else
-      sprite=132
+      sprite=148
     end
   else
     -- idle animation
     local idle_anim = flr(p.idle_frame/p.idle_delay)%4
     if idle_anim==0 then
-      sprite=129
+      sprite=145
     elseif idle_anim==1 then
-      sprite=133
+      sprite=149
     elseif idle_anim==2 then
-      sprite=134
+      sprite=150
     else
-      sprite=135
+      sprite=151
     end
   end
   
