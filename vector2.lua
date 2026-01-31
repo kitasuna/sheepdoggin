@@ -19,6 +19,10 @@ v2_meta={
 			return b:scale(a)
 		end
 	end,
+	__div=function(a,b)
+    assert(type(b) == "number")
+    return a:scale(1/b)
+	end,
 	__add=function(u,v)
 		return u:add(v)
 	end,

@@ -16,11 +16,12 @@ function Circ:collides(other)
   return (self.center - other.center):len() < self.radius + other.radius
 end
 
-function Circ:overlap(other)
-  local delta = self.center - other.center
+-- Returns the vector that would move the circle out of collision with `other`.
+function Circ:reaction(other)
+  local delta = other.center - self.center
   local dist = delta:len()
   local desiredDist = self.radius + other.radius
-  return delta:unit() * (desiredDist - dist)
+  return -delta:unit() * (desiredDist - dist)
 end
 
 Collision = {}
@@ -35,7 +36,7 @@ function Collision.fromBodies(a,b)
   local aCirc = a:collisionCirc()
   local bCirc = b:collisionCirc()
   if aCirc:collides(bCirc) then
-    return -aCirc:overlap(bCirc)
+    return aCirc:reaction(bCirc)
   end
   return nil
 end
@@ -46,6 +47,19 @@ function Physics:new(o)
   setmetatable(o, self)
   self.__index = self
   return o
+end
+
+function averageVecs(vecs)
+  local sum = v2(0,0)
+
+  if #vecs == 0 then
+    return sum
+  end
+
+  for vec in all(vecs) do
+    sum = sum + vec
+  end
+  return sum / #vecs
 end
 
 --[[
@@ -64,7 +78,7 @@ function Physics:resolve(bodies)
   -- higher things will move first and have priority.
   -- TODO: Maybe group by priority first? Or have the caller pass a list of
   -- lists that are ordered by priority?
-  local collisions = {}
+  local bodyCollisions = {}
   for firstBodyI=1,#bodies do
     local firstBody = bodies[firstBodyI]
     for secondBodyI=firstBodyI+1,#bodies do
@@ -72,21 +86,32 @@ function Physics:resolve(bodies)
       local secondBody = bodies[secondBodyI]
       local collision = Collision.fromBodies(firstBody, secondBody)
       if collision then
-        if not collisions[firstBodyI] then
-          collisions[firstBodyI] = {}
+        if not bodyCollisions[firstBodyI] then
+          bodyCollisions[firstBodyI] = {}
         end
-        add(collisions[firstBodyI], collision)
-        if not collisions[secondBodyI] then
-          collisions[secondBodyI] = {}
+        add(bodyCollisions[firstBodyI], collision/2)
+        if not bodyCollisions[secondBodyI] then
+          bodyCollisions[secondBodyI] = {}
         end
-        add(collisions[secondBodyI], -collision)
+        add(bodyCollisions[secondBodyI], -collision/2)
       end
     end
   end
-  -- resolve
-  for i, collision in pairs(collisions) do
-    printh("object" .. i)
-    printh("collisions" .. #collisions)
+
+  -- resolve collisions and intentions
+  for bodyI=1,#bodies do
+    local collisions = bodyCollisions[bodyI]
+    local body = bodies[bodyI]
+    if not collisions then
+      body:resolve(body:intention())
+    else
+      -- NOTE: We're mutating the collisions array here.
+      add(collisions, body:intention())
+      -- TODO: Actually, probably want to weight intention less strongly and
+      -- collisions more strongly?
+      local average = averageVecs(collisions)
+      body:resolve(average)
+    end
   end
 end
 
@@ -99,12 +124,37 @@ function physicstest:new(o)
 end
 
 function physicstest:init()
+  local c1 = Circ.fromCenterRadius(v2(0,0), 4)
+  local c2 = Circ.fromCenterRadius(v2(3,0), 4)
+  local col = c1:reaction(c2)
+  printh("x " .. col.x .. " y " .. col.y)
+
   self.physics = Physics:new()
   self.bodyA = {
     pos = v2(0,0),
     rad = 4,
     collisionCirc = function(self)
       return Circ.fromCenterRadius(self.pos, self.rad)
+    end,
+    intention = function(self)
+      local vel = 0.6
+      local delta = v2(0,0)
+      if btn(0) then  -- left
+        delta.x -= vel
+      end
+      if btn(1) then
+        delta.x += vel
+      end
+      if btn(2) then
+        delta.y -= vel
+      end
+      if btn(3) then
+        delta.y += vel
+      end
+      return delta
+    end,
+    resolve = function(self, v)
+      self.pos = self.pos + v
     end,
   }
   self.bodyB = {
@@ -113,23 +163,16 @@ function physicstest:init()
     collisionCirc = function(self)
       return Circ.fromCenterRadius(self.pos, self.rad)
     end,
+    intention = function(self)
+      return v2(0,0)
+    end,
+    resolve = function(self, v)
+      self.pos = self.pos + v
+    end,
   }
 end
 
 function physicstest:update()
-  local vel = 0.3
-  if btn(0) then
-    self.bodyA.pos.x -= vel
-  end
-  if btn(1) then
-    self.bodyA.pos.x += vel
-  end
-  if btn(2) then
-    self.bodyA.pos.y -= vel
-  end
-  if btn(3) then
-    self.bodyA.pos.y += vel
-  end
   self.physics:resolve({self.bodyA, self.bodyB})
 end
 
