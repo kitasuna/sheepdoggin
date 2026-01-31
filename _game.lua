@@ -1,6 +1,7 @@
 function update_game(dt)
   player:update()
   sheep_mgr:update(dt)
+  enemy:update()
   --_camera_update()
   --_update_animation()
   local stuff = 
@@ -21,6 +22,7 @@ function update_game(dt)
       sheep_to_wait(sheep)
     end
   end
+  physics:resolve(merge(sheep_mgr.sheep, {player, enemy}))
 end
 
 function draw_game()
@@ -30,6 +32,7 @@ function draw_game()
   player:draw()
   _camera_draw()
   _draw_animation()
+  enemy:draw()
   palt(0,false)
   sheep_mgr:draw()
   palt(0,true)
