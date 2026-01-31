@@ -84,6 +84,8 @@ function Physics:resolve(bodies)
     for secondBodyI=firstBodyI+1,#bodies do
       -- printh("first " .. firstBodyI .. " second " .. secondBodyI)
       local secondBody = bodies[secondBodyI]
+      -- TODO: This should add the intentions to the positions before checking
+      -- collision.
       local collision = Collision.fromBodies(firstBody, secondBody)
       if collision then
         if not bodyCollisions[firstBodyI] then
@@ -115,6 +117,33 @@ function Physics:resolve(bodies)
   end
 end
 
+DummyBody = {}
+function DummyBody:new(o)
+  o = o or {}
+  setmetatable(o, self)
+  self.__index = self
+  return o
+end
+
+function DummyBody.fromCenterRadius(center, r)
+  return DummyBody:new{
+    collisionCircle = Circ.fromCenterRadius(center, r)
+  }
+end
+
+function DummyBody:collisionCirc()
+  return self.collisionCircle
+end
+
+function DummyBody:intention()
+  -- Ohhh yeah, we're super dumb.
+  return v2(0,0)
+end
+
+function DummyBody:resolve(v)
+  self.collisionCircle.center += v
+end
+
 physicstest = {}
 function physicstest:new(o)
   o = o or {}
@@ -130,7 +159,7 @@ function physicstest:init()
   printh("x " .. col.x .. " y " .. col.y)
 
   self.physics = Physics:new()
-  self.bodyA = {
+  self.player = {
     pos = v2(0,0),
     rad = 4,
     collisionCirc = function(self)
@@ -157,27 +186,25 @@ function physicstest:init()
       self.pos = self.pos + v
     end,
   }
-  self.bodyB = {
-    pos = v2(40,40),
-    rad = 4,
-    collisionCirc = function(self)
-      return Circ.fromCenterRadius(self.pos, self.rad)
-    end,
-    intention = function(self)
-      return v2(0,0)
-    end,
-    resolve = function(self, v)
-      self.pos = self.pos + v
-    end,
+  self.dummies = {
+    DummyBody.fromCenterRadius(v2(40,40), 4),
+    DummyBody.fromCenterRadius(v2(49,48), 4),
+    DummyBody.fromCenterRadius(v2(48,48), 4),
   }
 end
 
 function physicstest:update()
-  self.physics:resolve({self.bodyA, self.bodyB})
+  local bodies = {self.player}
+  for body in all(self.dummies) do
+    add(bodies, body)
+  end
+  self.physics:resolve(bodies)
 end
 
 function physicstest:draw()
   cls()
-  spr(1,self.bodyA.pos.x, self.bodyA.pos.y)
-  spr(2,self.bodyB.pos.x, self.bodyB.pos.y)
+  spr(1,self.player.pos.x, self.player.pos.y)
+  for body in all(self.dummies) do
+    spr(2,body:collisionCirc().center.x, body:collisionCirc().center.y)
+  end
 end
