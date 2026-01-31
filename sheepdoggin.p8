@@ -1,19 +1,36 @@
 pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
--- main
-print("hello dog!")
-function _init()
 
+#include _game.lua
+#include _title.lua
+#include player.lua
+#include sheep.lua
+
+-- globals for controlling time stuff
+_now = 0
+_last_ts = 0
+
+-- main
+function _init()
+  printh("--init")
+
+  _now = time()
+  _last_ts = _now
+
+  __update = update_game
+  __draw = draw_game
 end
 
-function _update()
-
+function _update60()
+  _now = time()
+  local dt = _now - _last_ts
+  __update(dt)
+  _last_ts = _now
 end
 
 function _draw()
-  cls()
-  print("you sly dog, you", 32, 64)
+  __draw()
 end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
