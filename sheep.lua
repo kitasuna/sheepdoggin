@@ -19,7 +19,7 @@ function SheepMgr:spawn()
   for i=10,110,7 do
     for j=10,110,7 do
       local decision = rnd()
-      if decision >= 0.9 then
+      if decision >= 0.90 then
         add(self.sheep, new_sheep(i+rnd(3),j+rnd(3)))
       end
     end
@@ -43,8 +43,9 @@ function new_sheep(x, y)
     pos = v2(x,y),
     vel = v2(0,0),
     tgt_pos = nil,
+    req_pos = v2(0,0),
     rad = 4,
-    hops = {0,1,1,2,2,3,3,4,3,3,2,2,1,1,0},
+    hops = {0,1,1,2,2,3,2,2,1,1,0},
     hop_index = 1,
     next_state = nil,
     flip_x = false,
@@ -59,18 +60,27 @@ function new_sheep(x, y)
         return v2(0,0)
       end
 
-      local delta = v2(
-        self.tgt_pos:sub(self.pos).x * 0.3,
-        self.tgt_pos:sub(self.pos).y * 0.3
+      self.req_pos = v2(
+        self.tgt_pos:sub(self.pos).x * 0.1,
+        self.tgt_pos:sub(self.pos).y * 0.1
       )
       -- printh("Tried to move "..delta.x..", "..delta.y)
-      return delta
+      return self.req_pos
     end,
-    resolve = function(self, new_pos)
+    resolve = function(self, delta)
+      if self.state == SheepState.Wait then
+        return
+      end
+
       if self.tgt_pos == nil then
         return
       end
-      if abs(new_pos.x) <= 1 and abs(new_pos.y) <=1 then
+
+      self.pos.x += delta.x
+      self.pos.y += delta.y
+
+      local remaining = self.pos:sub(delta)
+      if abs(remaining.x) <= 1 and abs(remaining.y) <=1 then
         -- printh("Arrived!")
         self.state = SheepState.Wait
         self.state_f = sheep_state_wait
@@ -78,16 +88,13 @@ function new_sheep(x, y)
         return
       end
 
-      self.pos.x += new_pos.x * 0.3
-      self.pos.y += new_pos.y * 0.3
-      -- printh("Requested move to "..self.tgt_pos.x..","..self.tgt_pos.y)
-      -- printh("Got back "..new_pos.x..","..new_pos.y)
       self.hop_index += 1
       if self.hop_index > #self.hops then
         self.hop_index = 1
       end
-      if self.tgt_pos.x != new_pos.x
-        or self.tgt_pos.y != new_pos.y then
+      -- we got a collision
+      if self.req_pos.x != delta.x
+        or self.req_pos.y != delta.y then
         self.state = SheepState.Wait
         self.state_f = sheep_state_wait
         self.state_ttl = rnd(2)
