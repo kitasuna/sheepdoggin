@@ -6,6 +6,7 @@ __lua__
 #include _title.lua
 #include player.lua
 #include sheep.lua
+#include vector2.lua
 
 -- globals for controlling time stuff
 _now = 0
