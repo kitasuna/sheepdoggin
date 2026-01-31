@@ -68,6 +68,9 @@ function new_sheep(x, y)
       return self.req_pos
     end,
     resolve = function(self, delta)
+      self.pos.x += delta.x
+      self.pos.y += delta.y
+
       if self.state == SheepState.Wait then
         return
       end
@@ -75,9 +78,6 @@ function new_sheep(x, y)
       if self.tgt_pos == nil then
         return
       end
-
-      self.pos.x += delta.x
-      self.pos.y += delta.y
 
       local remaining = self.pos:sub(delta)
       if abs(remaining.x) <= 1 and abs(remaining.y) <=1 then

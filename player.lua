@@ -143,16 +143,14 @@ player = {
             self.dx,
             self.dy
           )
-          printh("Tried to move "..delta.x..", "..delta.y)
           return delta
         end,
-        resolve = function(self, new_pos)
-            if abs(new_pos.x) <= 0.2 and abs(new_pos.y) <= 0.2 then
+        resolve = function(self, delta)
+            if abs(delta.x) <= 0.2 and abs(delta.y) <= 0.2 then
                 return
             end
-              printh("Got new pos "..new_pos.x..", "..new_pos.y)
-            self.x += new_pos.x
-            self.y += new_pos.y
+            self.x += delta.x
+            self.y += delta.y
         end,
     }
 

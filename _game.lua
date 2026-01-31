@@ -4,7 +4,7 @@ function update_game(dt)
   --_camera_update()
   --_update_animation()
   local stuff = 
-  physics:resolve(merge(sheep_mgr.sheep, {player}))
+  physics:bodyBodyCollisions(merge(sheep_mgr.sheep, {player}))
 end
 
 function draw_game()
@@ -17,6 +17,7 @@ function draw_game()
   palt(0,false)
   sheep_mgr:draw()
   palt(0,true)
+  print("cpu: " .. stat(1),0,10)
 
 end
 

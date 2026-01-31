@@ -80,7 +80,7 @@ Assume that every "body" has the following fns:
   - TODO: Should this also include the intended vec?
 ]]
 -- TODO: Map collision
-function Physics:resolve(bodies)
+function Physics:bodyBodyCollisions(bodies)
   -- Probably just do a stupid n^2 approach for now. Scan through the list,
   -- higher things will move first and have priority.
   -- TODO: Maybe group by priority first? Or have the caller pass a list of
@@ -200,7 +200,7 @@ function physicstest:update()
   for body in all(self.dummies) do
     add(bodies, body)
   end
-  self.physics:resolve(bodies)
+  self.physics:bodyBodyCollisions(bodies)
 end
 
 function physicstest:draw()
