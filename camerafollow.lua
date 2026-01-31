@@ -1,19 +1,7 @@
-function _camera_init()
- x_follow=64
- y_follow=64
-end
-
-function _camera_update()
- if btn(0) then x_follow-=1 end
- if btn(1) then x_follow+=1 end
- if btn(2) then y_follow-=1 end
- if btn(3) then y_follow+=1 end
-end
-
 function _camera_draw()
  --get player position and center camera
- cam_x=x_follow-64
- cam_y=y_follow-64
+ cam_x=player.x-64
+ cam_y=player.y-64
 
  --do not move camera outside borders
  cam_x=mid(0,cam_x,128)
