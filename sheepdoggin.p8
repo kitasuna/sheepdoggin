@@ -8,7 +8,6 @@ poke(0x5f2e, 1)
 
 #include _game.lua
 #include _title.lua
-#include physics.lua
 #include player.lua
 #include sheep.lua
 #include enemy.lua
