@@ -8,6 +8,7 @@ poke(0x5f2e, 1)
 
 #include _game.lua
 #include _title.lua
+#include physics.lua
 #include player.lua
 #include sheep.lua
 #include vector2.lua
@@ -23,7 +24,9 @@ function _init()
   _now = time()
   _last_ts = _now
 
-  SheepMgr:init()
+  sheep_mgr = SheepMgr:new()
+  sheep_mgr:spawn()
+  physics = Physics:new()
 
   __update = update_game
   __draw = draw_game
