@@ -130,7 +130,7 @@ player = {
             for b in all(objects) do
                 b:draw()
             end
-            print(player.mask, 0, 0)
+            print(player.mask, 0, 0, 3)
         end,
 
         collisionCirc = function(self)
@@ -160,8 +160,7 @@ player = {
 -- handling barks
 objects = {}
 function bark_draw(o)
-    print(o.text, o.x, o.y)
-    --spr(o.sprite, o.x, o.y, 2, 1)
+    print(o.text, o.x, o.y, 3)
 end
 
 function bark_update(b)
