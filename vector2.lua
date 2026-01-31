@@ -25,6 +25,9 @@ v2_meta={
 	__sub=function(u,v)
 		return u:sub(v)
 	end,
+  __unm=function(u)
+    return v2(-u.x,-u.y)
+  end,
 	__index={
 		len=v_len,
 		unit=v_unit,
