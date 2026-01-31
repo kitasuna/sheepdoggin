@@ -17,15 +17,16 @@ function draw_game()
   palt(0,false)
   sheep_mgr:draw()
   palt(0,true)
+
 end
 
 function merge(t0, t1)
 	local t2 = {}
 	for k,v in pairs(t0) do
-		t2[k] = v
+		add(t2, v)
 	end
 	for k,v in pairs(t1) do
-		t2[k] = v
+		add(t2, v)
 	end
 	return t2
 end
