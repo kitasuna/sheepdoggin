@@ -69,6 +69,31 @@ function averageVecs(vecs)
   return sum / #vecs
 end
 
+function Physics:getCollidingTiles(body)
+  local circ = body:collisionCirc()
+  local upperLeft = circ.center - v2(circ.radius, circ.radius)
+  local lowerRight = circ.center + v2(circ.radius, circ.radius)
+  local tiles = {}
+  for y=upperLeft.y\8,lowerRight.y\8 do
+    for x=upperLeft.x\8,lowerRight.x\8 do
+      -- Check flag 0 on the tile, if set it's a colliding tile.
+      if fget(mget(x,y),0) then
+        add(tiles, {x=x,y=y})
+      end
+    end
+  end
+  return tiles
+end
+
+-- Returns response vector for the body. The body must respect it.
+function Physics:mapCollision(body)
+  -- TODO: I'm starting with square square collision here because it's easier.
+  -- We can do circle square later if we have time.
+  local tiles = self:getCollidingTiles(body)
+  for tile in all(tiles) do
+  end
+end
+
 --[[
 Assume that every "body" has the following fns:
 - collisionCirc() -> Circ
