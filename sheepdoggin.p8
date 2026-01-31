@@ -33,7 +33,6 @@ function _init()
 
   __update = update_game
   __draw = draw_game
-  _camera_init()
   _init_animation()
 end
 
@@ -42,7 +41,6 @@ function _update60()
   local dt = _now - _last_ts
   __update(dt)
   _last_ts = _now
-  _camera_update()
   _update_animation()
 end
 

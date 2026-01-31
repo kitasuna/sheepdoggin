@@ -126,7 +126,6 @@ player = {
         end,
 
         draw = function(self)
-            spr(self.sprite, self.x, self.y)
             for b in all(objects) do
                 b:draw()
             end

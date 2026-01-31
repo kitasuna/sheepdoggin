@@ -3,9 +3,9 @@ function _init_animation()
   p.x=64
   p.y=64
   p.frame=0  -- actual animation frame
-  p.anim_delay=15  -- the higher it is the slower animation transition
+  p.anim_delay=12  -- the higher it is the slower animation transition
   p.idle_frame=0  -- separate frame counter for idle
-  p.idle_delay=25  -- idle animation speed
+  p.idle_delay=17  -- idle animation speed
 end
 
 function _update_animation()
@@ -49,5 +49,5 @@ function _draw_animation()
     end
   end
   
-  spr(sprite,x_follow,y_follow)
+  spr(sprite,player.x,player.y)
 end
