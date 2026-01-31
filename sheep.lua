@@ -19,7 +19,7 @@ function SheepMgr:spawn()
   for i=10,110,7 do
     for j=10,110,7 do
       local decision = rnd()
-      if decision >= 0.90 then
+      if decision >= 0.9 then
         add(self.sheep, new_sheep(i+rnd(3),j+rnd(3)))
       end
     end
@@ -36,6 +36,7 @@ SheepState = {
   Wait = "wait",
   Nibble = "nibble",
   Walk = "walk",
+  Panic = "panic",
 }
 
 function new_sheep(x, y) 
@@ -60,9 +61,14 @@ function new_sheep(x, y)
         return v2(0,0)
       end
 
+      local step = 0.1
+      if self.state == SheepState.Panic then
+        step = 0.2
+      end
+
       self.req_pos = v2(
-        self.tgt_pos:sub(self.pos).x * 0.1,
-        self.tgt_pos:sub(self.pos).y * 0.1
+        self.tgt_pos:sub(self.pos).x * step,
+        self.tgt_pos:sub(self.pos).y * step
       )
       -- printh("Tried to move "..delta.x..", "..delta.y)
       return self.req_pos
@@ -108,9 +114,9 @@ function new_sheep(x, y)
         1,1,
         self.flip_x
       )
-      if self.state == SheepState.Nibble then
+       if self.state == SheepState.Nibble then
         print("yum", self.pos.x-3, self.pos.y-7, 3)
-      end
+       end
       palt(14, false)
     end,
     update = function(self, dt)
@@ -152,6 +158,39 @@ function sheep_state_nibble(sheep, dt)
 end
 
 function sheep_state_walk(sheep, dt)
+  -- we're close to the tgt, so just cheat and change state
+  local remaining = sheep.tgt_pos:sub(sheep.pos)
+  if abs(remaining.x) < 1 and abs(remaining.y) < 1 then
+    sheep.pos.x = sheep.tgt_pos.x
+    sheep.pos.y = sheep.tgt_pos.y
+    sheep.tgt_pos = nil
+    sheep.state_ttl = rnd(2)
+    sheep.state = SheepState.Wait
+    sheep.state_f = sheep_state_wait
+    sheep.hop_index = 1
+    return
+  end
+
+  if remaining.x < 0 then
+    sheep.flip_x = false
+  else
+    sheep.flip_x = true
+  end
+
+end
+
+function sheep_to_panic(sheep, dir)
+  sheep.state = SheepState.Panic
+  sheep.tgt_pos = dir
+end
+
+function sheep_to_wait(sheep)
+  sheep.state = SheepState.Wait
+  sheep.state_ttl = rnd(2)
+end
+
+
+function sheep_state_panic(sheep, dt)
   -- we're close to the tgt, so just cheat and change state
   local remaining = sheep.tgt_pos:sub(sheep.pos)
   if abs(remaining.x) < 1 and abs(remaining.y) < 1 then
