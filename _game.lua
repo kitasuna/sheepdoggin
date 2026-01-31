@@ -5,7 +5,7 @@ end
 function draw_game()
   cls()
   
-  rectfill(0,0,128,128,3)
+  rectfill(0,0,128,128,7)
   palt(0,false)
   SheepMgr:draw()
   palt(0,true)

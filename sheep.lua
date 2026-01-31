@@ -38,14 +38,20 @@ function new_sheep(x, y)
     hops = {0,1,1,2,2,3,3,4,3,3,2,2,1,1,0},
     hop_index = 1,
     next_state = nil,
+    flip_x = false,
     state_f = sheep_state_wait,
     state = SheepState.Wait,
     state_ttl = rnd(3),
     draw = function(self)
       palt(14, true)
-      spr(144, self.pos.x, self.pos.y + self.hops[self.hop_index])
+      spr(144,
+        self.pos.x,
+        self.pos.y + self.hops[self.hop_index],
+        1,1,
+        self.flip_x
+      )
       if self.state == SheepState.Nibble then
-        print("yum", self.pos.x-3, self.pos.y-7, 7)
+        print("yum", self.pos.x-3, self.pos.y-7, 3)
       end
       palt(14, false)
     end,
@@ -99,6 +105,12 @@ function sheep_state_walk(sheep, dt)
     sheep.state_f = sheep_state_wait
     sheep.hop_index = 1
     return
+  end
+
+  if remaining.x < 0 then
+    sheep.flip_x = false
+  else
+    sheep.flip_x = true
   end
 
   -- otherwise, keep walkin
