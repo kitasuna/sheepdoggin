@@ -3,6 +3,7 @@ version 43
 __lua__
 #include vector2.lua
 #include physics.lua
+#include physicstest.lua
 
 p = physicstest:new()
 
