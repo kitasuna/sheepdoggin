@@ -82,7 +82,6 @@ function Physics:resolve(bodies)
   for firstBodyI=1,#bodies do
     local firstBody = bodies[firstBodyI]
     for secondBodyI=firstBodyI+1,#bodies do
-      -- printh("first " .. firstBodyI .. " second " .. secondBodyI)
       local secondBody = bodies[secondBodyI]
       -- TODO: This should add the intentions to the positions before checking
       -- collision.
@@ -153,20 +152,15 @@ function physicstest:new(o)
 end
 
 function physicstest:init()
-  local c1 = Circ.fromCenterRadius(v2(0,0), 4)
-  local c2 = Circ.fromCenterRadius(v2(3,0), 4)
-  local col = c1:reaction(c2)
-  printh("x " .. col.x .. " y " .. col.y)
-
   self.physics = Physics:new()
   self.player = {
     pos = v2(0,0),
-    rad = 4,
+    radius = 10,
     collisionCirc = function(self)
-      return Circ.fromCenterRadius(self.pos, self.rad)
+      return Circ.fromCenterRadius(self.pos, self.radius)
     end,
     intention = function(self)
-      local vel = 0.6
+      local vel = 2.0
       local delta = v2(0,0)
       if btn(0) then  -- left
         delta.x -= vel
@@ -186,11 +180,12 @@ function physicstest:init()
       self.pos = self.pos + v
     end,
   }
-  self.dummies = {
-    DummyBody.fromCenterRadius(v2(40,40), 4),
-    DummyBody.fromCenterRadius(v2(49,48), 4),
-    DummyBody.fromCenterRadius(v2(48,48), 4),
-  }
+  self.dummies = {}
+  for x=1,4 do
+    for y=1,4 do
+      add(self.dummies, DummyBody.fromCenterRadius(v2(40+x*8,40+y*8), 4))
+    end
+  end
 end
 
 function physicstest:update()
@@ -203,8 +198,9 @@ end
 
 function physicstest:draw()
   cls()
-  spr(1,self.player.pos.x, self.player.pos.y)
+  spr(1,self.player.pos.x - 4, self.player.pos.y - 4)
   for body in all(self.dummies) do
-    spr(2,body:collisionCirc().center.x, body:collisionCirc().center.y)
+    local circ = body:collisionCirc()
+    spr(2,circ.center.x - circ.radius, circ.center.y - circ.radius)
   end
 end

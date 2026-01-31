@@ -1,27 +1,36 @@
-SheepMgr = {
-  sheep = {},
-  init = function(self)
-    -- add(self.sheep, new_sheep(32, 32))
-    for i=10,110,7 do
-      for j=10,110,7 do
-        local decision = rnd()
-        if decision >= 0.9 then
-          add(self.sheep, new_sheep(i+rnd(3),j+rnd(3)))
-        end
+SheepMgr = {}
+function SheepMgr:new(o)
+  o = o or {
+    sheep = {},
+  }
+  setmetatable(o, self)
+  self.__index = self
+  return o
+end
+
+function SheepMgr:update(dt)
+  for i, sheep in pairs(self.sheep) do
+    sheep:update(dt) 
+  end
+end
+
+function SheepMgr:spawn()
+  -- add(self.sheep, new_sheep(32, 32))
+  for i=10,110,7 do
+    for j=10,110,7 do
+      local decision = rnd()
+      if decision >= 0.9 then
+        add(self.sheep, new_sheep(i+rnd(3),j+rnd(3)))
       end
     end
-  end,
-  update = function(self, dt)
-    for i, sheep in pairs(self.sheep) do
-      sheep:update(dt) 
-    end
-  end,
-  draw = function(self)
-    for i, sheep in pairs(self.sheep) do
-      sheep:draw() 
-    end
-  end,
-}
+  end
+end
+
+function SheepMgr:draw()
+  for i, sheep in pairs(self.sheep) do
+    sheep:draw() 
+  end
+end
 
 SheepState = {
   Wait = "wait",
@@ -42,6 +51,48 @@ function new_sheep(x, y)
     state_f = sheep_state_wait,
     state = SheepState.Wait,
     state_ttl = rnd(3),
+    collisionCirc = function(self)
+      return Circ.fromCenterRadius(self.pos:add(v2(4,4)),4)
+    end,
+    intention = function(self)
+      if self.tgt_pos == nil then
+        return v2(0,0)
+      end
+
+      local delta = v2(
+        self.tgt_pos:sub(self.pos).x * 0.3,
+        self.tgt_pos:sub(self.pos).y * 0.3
+      )
+      -- printh("Tried to move "..delta.x..", "..delta.y)
+      return delta
+    end,
+    resolve = function(self, new_pos)
+      if self.tgt_pos == nil then
+        return
+      end
+      if abs(new_pos.x) <= 1 and abs(new_pos.y) <=1 then
+        -- printh("Arrived!")
+        self.state = SheepState.Wait
+        self.state_f = sheep_state_wait
+        self.state_ttl = rnd(2)
+        return
+      end
+
+      self.pos.x += new_pos.x * 0.3
+      self.pos.y += new_pos.y * 0.3
+      -- printh("Requested move to "..self.tgt_pos.x..","..self.tgt_pos.y)
+      -- printh("Got back "..new_pos.x..","..new_pos.y)
+      self.hop_index += 1
+      if self.hop_index > #self.hops then
+        self.hop_index = 1
+      end
+      if self.tgt_pos.x != new_pos.x
+        or self.tgt_pos.y != new_pos.y then
+        self.state = SheepState.Wait
+        self.state_f = sheep_state_wait
+        self.state_ttl = rnd(2)
+      end
+    end,
     draw = function(self)
       palt(14, true)
       spr(144,
@@ -113,12 +164,4 @@ function sheep_state_walk(sheep, dt)
     sheep.flip_x = true
   end
 
-  -- otherwise, keep walkin
-  sheep.pos.x += dt * remaining.x
-  sheep.pos.y += dt * remaining.y
-  sheep.hop_index += 1
-  if sheep.hop_index > #sheep.hops then
-    sheep.hop_index = 1
-  end
 end
-
