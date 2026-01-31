@@ -2,6 +2,10 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 
+-- Set palette first so that artists can work even with missing files xD
+pal({[0]=128,136,9,7,15,135,138,139,3,131,1,6,13,141,132,4},1)
+poke(0x5f2e, 1)
+
 #include _game.lua
 #include _title.lua
 #include player.lua
