@@ -4,8 +4,8 @@ function _camera_draw()
  cam_y=player.y-64
 
  --do not move camera outside borders
- cam_x=mid(0,cam_x,128)
- cam_y=mid(0,cam_y,128)
+ cam_x=mid(0,cam_x,MAP_WIDTH)
+ cam_y=mid(0,cam_y,MAP_HEIGHT)
 
  
  camera(cam_x,cam_y)

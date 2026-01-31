@@ -52,15 +52,15 @@ player = {
             end
             if (btnp(5)) new_bark(self.x + self.dx, self.y + self.dy, 4, 4, self.sound*self.dx, self.sound*self.dy)
             local i, j=1, 1
-            while(objects[i]) do
-                if objects[i]:update() then
+            while(barks[i]) do
+                if barks[i]:update() then
                     if i != j then
-                        objects[j] = objects[i]
-                        objects[i] = nil
+                        barks[j] = barks[i]
+                        barks[i] = nil
                     end
                     j += 1
                 else
-                    objects[i] = nil
+                    barks[i] = nil
                 end
                 i += 1
             end
@@ -126,8 +126,8 @@ player = {
         end,
 
         draw = function(self)
-            for b in all(objects) do
-                b:draw()
+            for bark in all(barks) do
+                bark:draw()
             end
             print(player.mask, 0, 0, 3)
         end,
@@ -161,7 +161,7 @@ player = {
     }
 
 -- handling barks
-objects = {}
+barks = {}
 function bark_draw(o)
     print(o.text, o.x, o.y, 3)
 end
@@ -183,7 +183,7 @@ function new_bark(x, y, w, h, dx, dy)
         text = player.text,
         draw = bark_draw
     }
-    add(objects, b)
+    add(barks, b)
     return b
 end
 

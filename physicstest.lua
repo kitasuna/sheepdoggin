@@ -75,7 +75,7 @@ function physicstest:update()
   for body in all(self.dummies) do
     add(bodies, body)
   end
-  self.physics:bodyBodyCollisions(bodies)
+  self.physics:resolveCollisions(bodies)
 end
 
 function physicstest:draw()

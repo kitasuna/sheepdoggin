@@ -86,12 +86,29 @@ function Physics:getCollidingTiles(body)
 end
 
 -- Returns response vector for the body. The body must respect it.
-function Physics:mapCollision(body)
-  -- TODO: I'm starting with square square collision here because it's easier.
-  -- We can do circle square later if we have time.
-  local tiles = self:getCollidingTiles(body)
-  for tile in all(tiles) do
+function Physics:mapCollision(body, intention)
+  -- TODO: Doing this MVP first:
+  --  1. DONE: Only border collision.
+  --  2. Treat body as a square, so easy square-square collision with tiles.
+  --  3. If we have time, circle-square collision with tiles.
+  local origCirc = body:collisionCirc()
+  -- Pretend to apply the body-body collision reaction and start from there.
+  local candidatePos = v2(origCirc.center.x, origCirc.center.y) + intention
+  local margin = 8 + origCirc.radius
+  if candidatePos.x < margin then
+    candidatePos.x = margin
+  elseif candidatePos.x > MAP_WIDTH - margin then
+    candidatePos.x = MAP_WIDTH - margin
   end
+
+  if candidatePos.y < margin then
+    candidatePos.y = margin
+  elseif candidatePos.y > MAP_HEIGHT - margin then
+    candidatePos.y = MAP_HEIGHT - margin
+  end
+
+  -- Find the reaction from all the map collision.
+  return candidatePos - origCirc.center
 end
 
 --[[
@@ -103,9 +120,9 @@ Assume that every "body" has the following fns:
 - resolve(Vec2) -> nil
   - Updates the object to actually move by Vec2 amount.
   - TODO: Should this also include the intended vec?
+  - TODO: Differing weights? Layers?
 ]]
--- TODO: Map collision
-function Physics:bodyBodyCollisions(bodies)
+function Physics:resolveCollisions(bodies)
   -- Probably just do a stupid n^2 approach for now. Scan through the list,
   -- higher things will move first and have priority.
   -- TODO: Maybe group by priority first? Or have the caller pass a list of
@@ -133,17 +150,23 @@ function Physics:bodyBodyCollisions(bodies)
 
   -- resolve collisions and intentions
   for bodyI=1,#bodies do
-    local collisions = bodyCollisions[bodyI]
     local body = bodies[bodyI]
+
+    local bodyBodyReaction
+    local collisions = bodyCollisions[bodyI]
     if not collisions then
-      body:resolve(body:intention())
+      bodyBodyReaction = body:intention()
     else
       -- NOTE: We're mutating the collisions array here.
       add(collisions, body:intention())
       -- TODO: Actually, probably want to weight intention less strongly and
       -- collisions more strongly?
-      local average = averageVecs(collisions)
-      body:resolve(average)
+      bodyBodyReaction = averageVecs(collisions)
     end
+
+    -- Map collision is checked last because it is the most strict (map tiles
+    -- never move and should never allow an intrusion).
+    local mapCollisionReaction = self:mapCollision(body, bodyBodyReaction)
+    body:resolve(mapCollisionReaction)
   end
 end

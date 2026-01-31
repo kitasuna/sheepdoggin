@@ -1,3 +1,6 @@
+MAP_WIDTH = 128
+MAP_HEIGHT = 128
+
 function update_game(dt)
   player:update()
   sheep_mgr:update(dt)
@@ -19,7 +22,7 @@ function update_game(dt)
       sheep_to_wait(sheep)
     end
   end
-  physics:bodyBodyCollisions(merge(sheep_mgr.sheep, {player, enemy}))
+  physics:resolveCollisions(merge(sheep_mgr.sheep, {player, enemy}))
 end
 
 function draw_game()
