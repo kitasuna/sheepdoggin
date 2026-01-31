@@ -5,6 +5,22 @@ function update_game(dt)
   --_update_animation()
   local stuff = 
   physics:bodyBodyCollisions(merge(sheep_mgr.sheep, {player}))
+
+
+  -- dog / sheep collision time
+  local dogCirc = player:influenceCirc()
+  for i, sheep in pairs(sheep_mgr.sheep) do
+    local sheepCirc = sheep:collisionCirc() 
+    if sheep.state != SheepState.Panic and dogCirc:collides(sheepCirc) then
+      local dir = v2(
+        sheep.pos.x+(sheep.pos.x - player.x),
+        sheep.pos.y+(sheep.pos.y - player.y)
+      )
+      sheep_to_panic(sheep, dir)
+    elseif sheep.state == SheepState.Panic then
+      sheep_to_wait(sheep)
+    end
+  end
 end
 
 function draw_game()

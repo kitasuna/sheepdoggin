@@ -134,7 +134,13 @@ player = {
 
         collisionCirc = function(self)
             local pos = v2(self.x, self.y)
+            -- update this 4,4 if we change player sprite size
             return Circ.fromCenterRadius(pos:add(v2(4,4)),4)
+        end,
+        influenceCirc = function(self)
+            local pos = v2(self.x, self.y)
+            -- update this 4,4 if we change player sprite size
+            return Circ.fromCenterRadius(pos:add(v2(4,4)),14)
         end,
 
         intention = function(self)
