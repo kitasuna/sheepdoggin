@@ -11,5 +11,5 @@ function _camera_draw()
  camera(cam_x,cam_y)
 
  cls(1)
- map(0,0,0,0,32,32)
+ map(0,0,0,0,MAP_WIDTH/8,MAP_HEIGHT/8)
 end

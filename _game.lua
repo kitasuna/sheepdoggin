@@ -1,5 +1,5 @@
-MAP_WIDTH = 128
-MAP_HEIGHT = 128
+MAP_WIDTH = 48*8
+MAP_HEIGHT = 28*8
 
 function init_game()
   _now = time()

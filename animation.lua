@@ -1,3 +1,11 @@
+Animation = {}
+function Animation:new(o)
+  o = o or {}
+  setmetatable(o, self)
+  self.__index = self
+  return o
+end
+
 function _init_animation()
   p={}
   p.x=64
