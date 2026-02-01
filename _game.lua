@@ -28,6 +28,9 @@ end
 function game:update(dt)
   player:update()
   sheep_mgr:update(dt)
+   if (#sheep_mgr.sheep <= 0) and (#sheep_mgr.clearedSheep >= 1) then
+      current_gamestate = victory
+  end
   -- enemy:update()
   --_camera_update()
   --_update_animation()
@@ -83,7 +86,6 @@ function game:draw()
   palt(0,true)
   --_draw_animation()
   print("cpu: " .. stat(1),0,10)
-
 end
 
 function merge(t0, t1)
