@@ -14,8 +14,10 @@ end
 function title:draw()
     camera()
     cls()
-    print("sheepdoggin'!", 37, 37, 3)
-    print("start", 50, 80, 3)
+    -- print("sheepdoggin'!", 37, 37, 3)
+    rectfill(0,0,128,128,8)
+    map(75,9,8,12,14,11)
+    print("\^o9ffpress \151 or \142", 38, 96, 3)
 end
 
 -- lose stuff
