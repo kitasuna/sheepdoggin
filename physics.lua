@@ -23,6 +23,17 @@ function Circ:collides(other)
   return delta:len() < self.radius + other.radius
 end
 
+function Circ:collidesRect(rectTopLeft, rectBottomRight)
+  local closest_point = v2(
+    mid(self.center.x, rectTopLeft.x, rectBottomRight.x),
+    mid(self.center.y, rectTopLeft.y, rectBottomRight.y)
+  )
+
+  local delta = self.center - closest_point
+
+  return delta.x^2 + delta.y^2 <= self.radius^2
+end
+
 -- Returns the vector that would move the circle out of collision with `other`.
 function Circ:reaction(other)
   local delta = other.center - self.center
