@@ -10,6 +10,7 @@ function game:init()
   sheep_mgr = SheepMgr:new()
   sheep_mgr:spawn()
   physics = Physics:new()
+  player:init()
   enemy = Enemy:new()
   level = Level:new()
   level:setGoal((22+1)*8,

@@ -73,14 +73,15 @@ animal_behavior = {
 
 STARTING_ANIMAL = "dog"
 
-player = {
-  x = 63,
-  y = 63,
-  dx = 0,
-  dy = 0,
-  mask = STARTING_ANIMAL,
-  behavior = animal_behavior[STARTING_ANIMAL],
-}
+player = {}
+function player:init()
+  self.mask = STARTING_ANIMAL
+  self.behavior = animal_behavior[STARTING_ANIMAL]
+  self.x = 63
+  self.y = 63
+  self.dx = 0
+  self.dy = 0
+end
 
 function player:update()
   self.dy *= self.behavior.friction
