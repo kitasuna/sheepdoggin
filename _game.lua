@@ -20,22 +20,37 @@ end
 function update_game(dt)
   player:update()
   sheep_mgr:update(dt)
-  enemy:update()
+  -- enemy:update()
   --_camera_update()
   --_update_animation()
 
   -- dog / sheep collision time
   local dogCirc = player:influenceCirc()
-  for i, sheep in pairs(sheep_mgr.sheep) do
-    local sheepCirc = sheep:collisionCirc() 
-    if sheep.state != SheepState.Panic and dogCirc:collides(sheepCirc) then
-      local dir = v2(
-        sheep.pos.x+(sheep.pos.x - player.x),
-        sheep.pos.y+(sheep.pos.y - player.y)
-      )
-      sheep_to_panic(sheep, dir)
-    elseif sheep.state == SheepState.Panic then
-      sheep_to_wait(sheep)
+  local dogPosVec = v2(player.x, player.y)
+  local dogVelVec = v2(player.dx, player.dy)
+  local dottedDog = dogPosVec:dot(dogVelVec)
+  if player.dx != 0 or player.dy != 0 then
+    for i, sheep in pairs(sheep_mgr.sheep) do
+      local sheepCirc = sheep:collisionCirc() 
+      local dogSheepVec = sheep.pos - dogPosVec
+      local dotted = dogVelVec:dot(dogSheepVec)
+      if abs(dogSheepVec.x) < 14 and abs(dogSheepVec.y) < 14 then
+        local toSheepMag = sqrt(dogSheepVec.x^2 + dogSheepVec.y^2)
+        local dogVelMag = sqrt(dogVelVec.x^2 + dogVelVec.y^2)
+        local cosTheta = dotted / (dogVelMag * toSheepMag)
+        if toSheepMag > 0.001
+          and dogVelMag > 0.001 
+          and sheep.state != SheepState.Panic
+          and cosTheta >= cos(0.3) then
+            local dir = v2(
+              player.x + (player.dx * 20),
+              player.y + (player.dy * 20)
+            )
+            sheep_to_panic(sheep, dir)
+          end
+      elseif sheep.state == SheepState.Panic then
+        sheep_to_wait(sheep)
+      end
     end
   end
   physics:resolveCollisions(merge(sheep_mgr.sheep, {player, enemy}))

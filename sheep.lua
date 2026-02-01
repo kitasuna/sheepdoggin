@@ -19,7 +19,7 @@ function SheepMgr:spawn()
   for i=10,110,7 do
     for j=10,110,7 do
       local decision = rnd()
-      if decision >= 0.9 then
+      if decision >= 0.9 and #self.sheep < 20 then
         add(self.sheep, new_sheep(i+rnd(3),j+rnd(3)))
       end
     end
