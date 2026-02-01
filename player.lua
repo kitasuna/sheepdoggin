@@ -5,6 +5,7 @@ animal_behavior = {
     acc = 0.25,
     max_dx = 1,
     max_dy = 1,
+    radius = 6,
     waddle = 0,
     sprite = {
       topLeft = 45,
@@ -15,11 +16,13 @@ animal_behavior = {
     flop = 0,
     text = "bark",
     sound = 2,
+    sfx_id = 62,
   },
   mouse = {
     acc = 0.5,
     max_dx = 2,
     max_dy = 2,
+    radius = 4,
     waddle = 0,
     sprite = {
       topLeft = 9,
@@ -30,11 +33,13 @@ animal_behavior = {
     flop = 0,
     text = "squeak",
     sound = 1,
+    sfx_id = 58,
   },
   duck = {
     acc = 0.15,
     max_dx = 0.75,
     max_dy = 0.75,
+    radius = 3,
     waddle = 0.6,
     sprite = {
       topLeft = 1,
@@ -45,11 +50,13 @@ animal_behavior = {
     flop = 0,
     text = "quack",
     sound = 2,
+    sfx_id = 56,
   },
   fish = {
     acc = 0.10,
     max_dx = 3,
     max_dy = 3,
+    radius = 4,
     waddle = 0,
     sprite = {
       topLeft = 41,
@@ -60,6 +67,7 @@ animal_behavior = {
     flop = 0.2,
     text = "flop",
     sound = 0.1,
+    sfx_id = 57,
   },
 }
 
@@ -110,7 +118,12 @@ function player:update()
           self.mask = "dog"
       end
   end
-  if (btnp(5)) new_bark(self.x + self.dx, self.y + self.dy, 4, 4, self.behavior.sound*self.dx, self.behavior.sound*self.dy)
+  if btnp(5) then
+    if self.behavior.sfx_id then
+      sfx(self.behavior.sfx_id)
+    end
+    new_bark(self.x + self.dx, self.y + self.dy, 4, 4, self.behavior.sound*self.dx, self.behavior.sound*self.dy)
+  end
   local i, j=1, 1
   while(barks[i]) do
       if barks[i]:update() then
@@ -134,16 +147,19 @@ function player:update()
 
   self.dx = mid(-self.behavior.max_dx, self.dx, self.behavior.max_dx)
   self.dy = mid(-self.behavior.max_dy, self.dy, self.behavior.max_dy)
-  -- self.x += self.dx
-  -- self.y += self.dy
+  -- dx and dy are applied in :resolve
   self.behavior = animal_behavior[self.mask]
 end
 
 function player:draw()
+    local previousPalette = exportPalette()
+    palt(0, false)
+    palt(8, true)
+    -- TODO: Add sprite flipping.
     spr(
       self.behavior.sprite.topLeft,
-      self.x,
-      self.y,
+      self.x - self.behavior.sprite.w * 8 / 2,
+      self.y - self.behavior.sprite.h * 8 + 4,
       self.behavior.sprite.w,
       self.behavior.sprite.h
     )
@@ -151,18 +167,17 @@ function player:draw()
         bark:draw()
     end
     print(player.mask, 0, 0, 3)
+    importPalette(previousPalette)
 end
 
 function player:collisionCirc()
     local pos = v2(self.x, self.y)
-    -- update this 4,4 if we change player sprite size
-    return Circ.fromCenterRadius(pos:add(v2(4,4)),4)
+    return Circ.fromCenterRadius(pos, self.behavior.radius)
 end
 
 function player:influenceCirc()
     local pos = v2(self.x, self.y)
-    -- update this 4,4 if we change player sprite size
-    return Circ.fromCenterRadius(pos:add(v2(4,4)),14)
+    return Circ.fromCenterRadius(pos, 14)
 end
 
 function player:intention()

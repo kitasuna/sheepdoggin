@@ -2,6 +2,8 @@ SheepMgr = {}
 function SheepMgr:new(o)
   o = o or {
     sheep = {},
+    sound_timer = rnd(5),
+    clearedSheep = {},
   }
   setmetatable(o, self)
   self.__index = self
@@ -9,15 +11,27 @@ function SheepMgr:new(o)
 end
 
 function SheepMgr:update(dt)
+  -- sound timer
+  self.sound_timer -= dt
+  if self.sound_timer <= 0 then
+    sfx(63)
+    self.sound_timer = rnd(20)
+  end
+  
   for i, sheep in pairs(self.sheep) do
     sheep:update(dt) 
   end
+  for i, sheep in pairs(self.clearedSheep) do
+    sheep:update(dt) 
+  end
+
+
 end
 
 function SheepMgr:spawn()
   -- add(self.sheep, new_sheep(32, 32))
   for i=10,110,7 do
-    for j=10,110,7 do
+    for j=20,110,7 do
       local decision = rnd()
       if decision >= 0.9 and #self.sheep < 20 then
         add(self.sheep, new_sheep(i+rnd(3),j+rnd(3)))
@@ -27,9 +41,19 @@ function SheepMgr:spawn()
 end
 
 function SheepMgr:draw()
+  local previousPalette = exportPalette()
+  palt(0, false)
+  palt(8, true)
+  -- TODO: Draw these in Y order so that they can overlap.
   for i, sheep in pairs(self.sheep) do
     sheep:draw() 
   end
+
+  for i, sheep in pairs(self.clearedSheep) do
+    sheep:draw() 
+  end
+
+  importPalette(previousPalette)
 end
 
 SheepState = {
@@ -37,11 +61,18 @@ SheepState = {
   Nibble = "nibble",
   Walk = "walk",
   Panic = "panic",
+  Evac = "evac",
 }
 
 function new_sheep(x, y) 
   return {
     pos = v2(x,y),
+    radius = 5,
+    sprite = {
+      topLeft = 11,
+      w = 2,
+      h = 2,
+    },
     vel = v2(0,0),
     tgt_pos = nil,
     req_pos = v2(0,0),
@@ -54,7 +85,7 @@ function new_sheep(x, y)
     state = SheepState.Wait,
     state_ttl = rnd(3),
     collisionCirc = function(self)
-      return Circ.fromCenterRadius(self.pos:add(v2(4,4)),4)
+      return Circ.fromCenterRadius(self.pos, self.radius)
     end,
     intention = function(self)
       if self.tgt_pos == nil then
@@ -63,7 +94,7 @@ function new_sheep(x, y)
 
       local step = 0.1
       if self.state == SheepState.Panic then
-        step = 0.2
+        step = 0.25
       end
 
       self.req_pos = v2(
@@ -107,17 +138,16 @@ function new_sheep(x, y)
       end
     end,
     draw = function(self)
-      palt(14, true)
-      spr(144,
-        self.pos.x,
-        self.pos.y + self.hops[self.hop_index],
-        1,1,
+      -- NOTE: This relies on palette settings set in SheepMgr.
+      spr(self.sprite.topLeft,
+        self.pos.x - self.sprite.w * 8 / 2,
+        self.pos.y - self.sprite.h * 8 + self.hops[self.hop_index],
+        self.sprite.w, self.sprite.h,
         self.flip_x
       )
        if self.state == SheepState.Nibble then
-        print("yum", self.pos.x-3, self.pos.y-7, 3)
+         print("yum", self.pos.x - self.sprite.w * 8 / 2 - 3, self.pos.y - self.sprite.h * 8 - 7, 3)
        end
-      palt(14, false)
     end,
     update = function(self, dt)
       -- do current state actions
@@ -176,7 +206,6 @@ function sheep_state_walk(sheep, dt)
   else
     sheep.flip_x = true
   end
-
 end
 
 function sheep_to_panic(sheep, dir)
@@ -189,25 +218,25 @@ function sheep_to_wait(sheep)
   sheep.state_ttl = rnd(2)
 end
 
+function sheep_to_evac(sheep)
+  sheep.state = SheepState.Evac
+  sheep.tgt_pos = v2(
+    sheep.pos.x,
+    -32
+  )
+  add(sheep_mgr.clearedSheep, sheep)
+  del(sheep_mgr.sheep, sheep)
+  sheep.state_f = sheep_state_evac
+end
 
-function sheep_state_panic(sheep, dt)
-  -- we're close to the tgt, so just cheat and change state
-  local remaining = sheep.tgt_pos:sub(sheep.pos)
-  if abs(remaining.x) < 1 and abs(remaining.y) < 1 then
-    sheep.pos.x = sheep.tgt_pos.x
-    sheep.pos.y = sheep.tgt_pos.y
-    sheep.tgt_pos = nil
-    sheep.state_ttl = rnd(2)
-    sheep.state = SheepState.Wait
-    sheep.state_f = sheep_state_wait
+function sheep_state_evac(sheep, dt)
+  if sheep.pos.y >= 12 then
+    sheep.pos.y -= 0.5
+  end
+
+  -- celebratory hop
+  sheep.hop_index += 1
+  if sheep.hop_index > #sheep.hops then
     sheep.hop_index = 1
-    return
   end
-
-  if remaining.x < 0 then
-    sheep.flip_x = false
-  else
-    sheep.flip_x = true
-  end
-
 end

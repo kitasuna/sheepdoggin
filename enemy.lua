@@ -13,6 +13,7 @@ function Enemy:new(o)
   }
   setmetatable(o, self)
   self.__index = self
+  sfx(60)
   return o
 end
 
@@ -56,6 +57,7 @@ function Enemy:update()
       local dist = sqrt((sheep.pos.x - self.x)^2 + (sheep.pos.y - self.y)^2)
       if dist < 8 then  -- collision distance
         del(sheep_mgr.sheep, sheep)
+        sfx(55)
         break
       end
     end
