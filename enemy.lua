@@ -17,14 +17,25 @@ function Enemy:new(o)
     confused_timer = 0,
     confused_dx = 0,
     confused_dy = 0,
+    spawn_timer = 5,
+    spawned = false,
   }
   setmetatable(o, self)
   self.__index = self
-  sfx(60)
   return o
 end
 
 function Enemy:update()
+    -- handle spawn delay
+    if not self.spawned then
+      self.spawn_timer -= 1/30
+      if self.spawn_timer <= 0 then
+        self.spawned = true
+        sfx(60)
+      end
+      return
+    end
+    
     -- decrease confused timer
     if self.confused_timer > 0 then
       self.confused_timer -= 1/30
@@ -93,6 +104,9 @@ function Enemy:update()
 end
 
 function Enemy:draw()
+  if not self.spawned then
+    return
+  end
   local previousPalette = exportPalette()
   palt(0, false)
   palt(8, true)
@@ -101,11 +115,17 @@ function Enemy:draw()
 end
 
 function Enemy:collisionCirc()
+  if not self.spawned then
+    return Circ.fromCenterRadius(v2(-999, -999), 0)
+  end
   local pos = v2(self.x, self.y)
   return Circ.fromCenterRadius(pos, self.radius)
 end
 
 function Enemy:intention()
+  if not self.spawned then
+    return v2(0, 0)
+  end
   return v2(self.dx, self.dy)
 end
 
