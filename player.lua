@@ -5,6 +5,7 @@ animal_behavior = {
     acc = 0.25,
     max_dx = 1,
     max_dy = 1,
+    radius = 6,
     waddle = 0,
     sprite = {
       topLeft = 45,
@@ -20,6 +21,7 @@ animal_behavior = {
     acc = 0.5,
     max_dx = 2,
     max_dy = 2,
+    radius = 4,
     waddle = 0,
     sprite = {
       topLeft = 9,
@@ -35,6 +37,7 @@ animal_behavior = {
     acc = 0.15,
     max_dx = 0.75,
     max_dy = 0.75,
+    radius = 3,
     waddle = 0.6,
     sprite = {
       topLeft = 1,
@@ -50,6 +53,7 @@ animal_behavior = {
     acc = 0.10,
     max_dx = 3,
     max_dy = 3,
+    radius = 4,
     waddle = 0,
     sprite = {
       topLeft = 41,
@@ -134,16 +138,15 @@ function player:update()
 
   self.dx = mid(-self.behavior.max_dx, self.dx, self.behavior.max_dx)
   self.dy = mid(-self.behavior.max_dy, self.dy, self.behavior.max_dy)
-  -- self.x += self.dx
-  -- self.y += self.dy
+  -- dx and dy are applied in :resolve
   self.behavior = animal_behavior[self.mask]
 end
 
 function player:draw()
     spr(
       self.behavior.sprite.topLeft,
-      self.x,
-      self.y,
+      self.x - self.behavior.sprite.w * 8 / 2,
+      self.y - self.behavior.sprite.h * 8 + 4,
       self.behavior.sprite.w,
       self.behavior.sprite.h
     )
@@ -155,14 +158,12 @@ end
 
 function player:collisionCirc()
     local pos = v2(self.x, self.y)
-    -- update this 4,4 if we change player sprite size
-    return Circ.fromCenterRadius(pos:add(v2(4,4)),4)
+    return Circ.fromCenterRadius(pos, self.behavior.radius)
 end
 
 function player:influenceCirc()
     local pos = v2(self.x, self.y)
-    -- update this 4,4 if we change player sprite size
-    return Circ.fromCenterRadius(pos:add(v2(4,4)),14)
+    return Circ.fromCenterRadius(pos, 14)
 end
 
 function player:intention()
