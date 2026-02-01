@@ -5,6 +5,7 @@ total_sheep = {}
 game = {}
 
 function game:init()
+  total_sheep = {}
   _now = time()
   _last_ts = _now
   music(0)
