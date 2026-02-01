@@ -6,9 +6,13 @@ function Enemy:new(o)
     y = 20,
     dx = 0,
     dy = 0,
-    speed = 1.0,
-    max_speed = 1.5,
-    sprite = 152,
+    radius = 4,
+    sprite = {
+      topLeft = 193,
+      w = 2,
+      h = 2,
+    },
+    speed = 0.8,
     target_sheep = nil,
   }
   setmetatable(o, self)
@@ -64,12 +68,16 @@ function Enemy:update()
 end
 
 function Enemy:draw()
-  spr(self.sprite, self.x, self.y)
+  local previousPalette = exportPalette()
+  palt(0, false)
+  palt(8, true)
+  spr(self.sprite.topLeft, self.x - self.sprite.w * 8 / 2, self.y - self.sprite.h * 8 + self.radius, self.sprite.w, self.sprite.h)
+  importPalette(previousPalette)
 end
 
 function Enemy:collisionCirc()
   local pos = v2(self.x, self.y)
-  return Circ.fromCenterRadius(pos:add(v2(4,4)), 4)
+  return Circ.fromCenterRadius(pos, self.radius)
 end
 
 function Enemy:intention()

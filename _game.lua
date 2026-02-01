@@ -35,7 +35,7 @@ function game:update(dt)
   if (#sheep_mgr.sheep <= 0) and (#sheep_mgr.clearedSheep <= 0) then
       current_gamestate = gameover
   end
-  -- enemy:update()
+  enemy:update()
   --_camera_update()
   --_update_animation()
 
