@@ -2,6 +2,7 @@ SheepMgr = {}
 function SheepMgr:new(o)
   o = o or {
     sheep = {},
+    clearedSheep = {},
   }
   setmetatable(o, self)
   self.__index = self
@@ -12,12 +13,17 @@ function SheepMgr:update(dt)
   for i, sheep in pairs(self.sheep) do
     sheep:update(dt) 
   end
+  for i, sheep in pairs(self.clearedSheep) do
+    sheep:update(dt) 
+  end
+
+
 end
 
 function SheepMgr:spawn()
   -- add(self.sheep, new_sheep(32, 32))
   for i=10,110,7 do
-    for j=10,110,7 do
+    for j=20,110,7 do
       local decision = rnd()
       if decision >= 0.9 and #self.sheep < 20 then
         add(self.sheep, new_sheep(i+rnd(3),j+rnd(3)))
@@ -34,6 +40,11 @@ function SheepMgr:draw()
   for i, sheep in pairs(self.sheep) do
     sheep:draw() 
   end
+
+  for i, sheep in pairs(self.clearedSheep) do
+    sheep:draw() 
+  end
+
   importPalette(previousPalette)
 end
 
@@ -42,6 +53,7 @@ SheepState = {
   Nibble = "nibble",
   Walk = "walk",
   Panic = "panic",
+  Evac = "evac",
 }
 
 function new_sheep(x, y) 
@@ -186,7 +198,6 @@ function sheep_state_walk(sheep, dt)
   else
     sheep.flip_x = true
   end
-
 end
 
 function sheep_to_panic(sheep, dir)
@@ -199,25 +210,25 @@ function sheep_to_wait(sheep)
   sheep.state_ttl = rnd(2)
 end
 
+function sheep_to_evac(sheep)
+  sheep.state = SheepState.Evac
+  sheep.tgt_pos = v2(
+    sheep.pos.x,
+    -32
+  )
+  add(sheep_mgr.clearedSheep, sheep)
+  del(sheep_mgr.sheep, sheep)
+  sheep.state_f = sheep_state_evac
+end
 
-function sheep_state_panic(sheep, dt)
-  -- we're close to the tgt, so just cheat and change state
-  local remaining = sheep.tgt_pos:sub(sheep.pos)
-  if abs(remaining.x) < 1 and abs(remaining.y) < 1 then
-    sheep.pos.x = sheep.tgt_pos.x
-    sheep.pos.y = sheep.tgt_pos.y
-    sheep.tgt_pos = nil
-    sheep.state_ttl = rnd(2)
-    sheep.state = SheepState.Wait
-    sheep.state_f = sheep_state_wait
+function sheep_state_evac(sheep, dt)
+  if sheep.pos.y >= 12 then
+    sheep.pos.y -= 0.5
+  end
+
+  -- celebratory hop
+  sheep.hop_index += 1
+  if sheep.hop_index > #sheep.hops then
     sheep.hop_index = 1
-    return
   end
-
-  if remaining.x < 0 then
-    sheep.flip_x = false
-  else
-    sheep.flip_x = true
-  end
-
 end

@@ -9,6 +9,12 @@ function init_game()
   sheep_mgr:spawn()
   physics = Physics:new()
   enemy = Enemy:new()
+  level = Level:new()
+  level:setGoal(52,
+    8,
+    24,
+    8
+  )
 
   --__update = update_title
   --__draw = draw_title
@@ -53,6 +59,15 @@ function update_game(dt)
       end
     end
   end
+
+  -- sheep / goal collision stuff
+  local topLeft, bottomRight = level:getGoalCorners()
+  for i, sheep in pairs(sheep_mgr.sheep) do
+    if sheep.state == SheepState.Panic and sheep:collisionCirc():collidesRect(topLeft, bottomRight) then
+      sheep_to_evac(sheep)
+    end
+  end
+
   physics:resolveCollisions(merge(sheep_mgr.sheep, {player, enemy}))
   _update_animation()
 end
@@ -63,6 +78,7 @@ function draw_game()
   enemy:draw()
   palt(0,false)
   sheep_mgr:draw()
+  level:draw()
   palt(0,true)
   --_draw_animation()
   print("cpu: " .. stat(1),0,10)
