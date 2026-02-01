@@ -4,6 +4,7 @@ function SheepMgr:new(o)
     sheep = {},
     sound_timer = rnd(5),
     clearedSheep = {},
+    evac_sound_timer = 0,
   }
   setmetatable(o, self)
   self.__index = self
@@ -16,6 +17,14 @@ function SheepMgr:update(dt)
   if self.sound_timer <= 0 then
     sfx(63)
     self.sound_timer = rnd(20)
+  end
+  
+  if self.evac_sound_timer > 0 then
+    self.evac_sound_timer -= dt
+    if self.evac_sound_timer <= 0 then
+      sfx(-1, 3)  -- stop sound on channel 3 only
+      self.evac_sound_timer = 0
+    end
   end
   
   for i, sheep in pairs(self.sheep) do
@@ -224,7 +233,12 @@ function sheep_to_evac(sheep)
     sheep.pos.x,
     -32
   )
-  sfx(61)
+  
+  if sheep_mgr.evac_sound_timer <= 0 then
+    sfx(61, 3)  -- play on channel 3 so that we can controll it
+  end
+  sheep_mgr.evac_sound_timer = 1
+  
   add(sheep_mgr.clearedSheep, sheep)
   del(sheep_mgr.sheep, sheep)
   sheep.state_f = sheep_state_evac
