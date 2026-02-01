@@ -31,7 +31,6 @@ function update_game(dt)
   --_update_animation()
 
   -- dog / sheep collision time
-  local dogCirc = player:influenceCirc()
   local dogPosVec = v2(player.x, player.y)
   local dogVelVec = v2(player.dx, player.dy)
   local dottedDog = dogPosVec:dot(dogVelVec)
@@ -40,17 +39,17 @@ function update_game(dt)
       local sheepCirc = sheep:collisionCirc() 
       local dogSheepVec = sheep.pos - dogPosVec
       local dotted = dogVelVec:dot(dogSheepVec)
-      if abs(dogSheepVec.x) < 14 and abs(dogSheepVec.y) < 14 then
+      if abs(dogSheepVec.x) < 20 and abs(dogSheepVec.y) < 20 then
         local toSheepMag = sqrt(dogSheepVec.x^2 + dogSheepVec.y^2)
         local dogVelMag = sqrt(dogVelVec.x^2 + dogVelVec.y^2)
         local cosTheta = dotted / (dogVelMag * toSheepMag)
         if toSheepMag > 0.001
           and dogVelMag > 0.001 
           and sheep.state != SheepState.Panic
-          and cosTheta >= cos(0.3) then
+          and cosTheta >= cos(0.2) then
             local dir = v2(
-              player.x + (player.dx * 20),
-              player.y + (player.dy * 20)
+              player.x + (player.dx * 30),
+              player.y + (player.dy * 30)
             )
             sheep_to_panic(sheep, dir)
           end

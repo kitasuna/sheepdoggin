@@ -86,7 +86,7 @@ function new_sheep(x, y)
 
       local step = 0.1
       if self.state == SheepState.Panic then
-        step = 0.2
+        step = 0.25
       end
 
       self.req_pos = v2(
