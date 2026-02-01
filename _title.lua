@@ -40,8 +40,10 @@ function gameover:draw()
     rectfill(0,0,128,128,8)
     map(57, 8, 0, 0, 16, 16)
     palt(8, true)
+    palt(0, false)
     spr(243, 7*8, 12*8, 2, 1) -- fox
     palt(8, false)
+    palt(0, true)
     print("\^o9ffdespite your best efforts", 15, 5, 3)
     print("\^o9ffthe fox pulled the wool", 19, 15, 3)
     print("\^o9ffover your eyes", 38, 25, 3)
@@ -67,6 +69,7 @@ function victory:draw()
     cls()
     rectfill(0,0,128,128,8)
     map(57, 8, 0, 0, 16, 16)
+    palt(0, false)
     palt(8, true)
     spr(197, 4*8, 8*8, 2, 2) -- sheep
     spr(229, 4*8, 10*8, 2, 2) -- fish
@@ -77,6 +80,7 @@ function victory:draw()
     spr(215, 9*8, 9*8, 2, 1) -- duck
     spr(243, 7*8, 12*8, 2, 1) -- fox
     palt(8, false)
+    palt(0, true)
     print("\^o9ffthe sheepdog soul", 30, 5, 3)
     print("\^o9ffburns bright within you", 20, 15, 3)
     print("\^o9ffyou herded "..#total_sheep.."\^o9ff sheep", 30, 37, 3)
