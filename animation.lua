@@ -3,7 +3,29 @@ function Animation:new(o)
   o = o or {}
   setmetatable(o, self)
   self.__index = self
+  o:reset()
   return o
+end
+
+function Animation:reset()
+  self.frame_index = 1
+  self.frame_ticks = 0
+end
+
+function Animation:update()
+  self.frame_ticks += 1
+  if self.frame_ticks >= self.ticks_per_frame then
+    self.frame_index += 1
+    if self.frame_index > #self.frames then
+      self.frame_index = 1
+    end
+    self.frame_ticks = 0
+  end
+end
+
+function Animation:draw(x, y, flip_x, flip_y)
+  local frame = self.frames[self.frame_index]
+  spr(frame, x, y, self.w, self.h, flip_x, flip_y)
 end
 
 function _init_animation()

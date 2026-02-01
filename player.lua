@@ -7,8 +7,9 @@ animal_behavior = {
     max_dy = 1,
     radius = 6,
     waddle = 0,
-    sprite = {
-      topLeft = 45,
+    anim_params = {
+      frames = {45, 13},
+      ticks_per_frame = 15,
       w = 2,
       h = 2,
     },
@@ -25,8 +26,9 @@ animal_behavior = {
     max_dy = 2,
     radius = 4,
     waddle = 0,
-    sprite = {
-      topLeft = 9,
+    anim_params = {
+      frames = {9, 25},
+      ticks_per_frame = 15,
       w = 2,
       h = 1,
     },
@@ -43,8 +45,9 @@ animal_behavior = {
     max_dy = 0.75,
     radius = 3,
     waddle = 0.6,
-    sprite = {
-      topLeft = 1,
+    anim_params = {
+      frames = {1, 2},
+      ticks_per_frame = 15,
       w = 1,
       h = 2,
     },
@@ -61,8 +64,9 @@ animal_behavior = {
     max_dy = 3,
     radius = 4,
     waddle = 0,
-    sprite = {
-      topLeft = 41,
+    anim_params = {
+      frames = {41, 57},
+      ticks_per_frame = 15,
       w = 2,
       h = 1,
     },
@@ -80,11 +84,7 @@ STARTING_ANIMAL = "dog"
 player = {}
 function player:init()
   self.current_animal = STARTING_ANIMAL
-  self.behavior = animal_behavior[STARTING_ANIMAL]
-  self.x = 63
-  self.y = 63
-  self.dx = 0
-  self.dy = 0
+  player:reset()
 end
 
 function player:update()
@@ -142,7 +142,7 @@ function player:update()
   self.dx = mid(-self.behavior.max_dx, self.dx, self.behavior.max_dx)
   self.dy = mid(-self.behavior.max_dy, self.dy, self.behavior.max_dy)
   -- dx and dy are applied in :resolve
-  self.behavior = animal_behavior[self.current_animal]
+  self.anim:update()
 end
 
 function player:draw()
@@ -151,17 +151,14 @@ function player:draw()
     palt(8, true)
     -- TODO: Add sprite flipping.
     local spritePos = self:pos() + self:spriteOffset()
-    spr(
-      self.behavior.sprite.topLeft,
+    self.anim:draw(
       spritePos.x,
-      spritePos.y,
-      self.behavior.sprite.w,
-      self.behavior.sprite.h
+      spritePos.y
     )
     if self.behavior.mask then
       spr(
         self.behavior.mask,
-        spritePos.x + (self.behavior.sprite.w - 1) * 8,
+        spritePos.x + (self.anim.w - 1) * 8,
         spritePos.y,
         1,
         1
@@ -174,7 +171,7 @@ function player:draw()
 end
 
 function player:spriteOffset()
-  return v2(-self.behavior.sprite.w * 8 / 2, -self.behavior.sprite.h * 8 + 4)
+  return v2(-self.anim.w * 8 / 2, -self.anim.h * 8 + 4)
 end
 
 function player:pos()
@@ -259,13 +256,16 @@ function player:nextAnimal()
     current_gamestate:init()
   end
   self.behavior = animal_behavior[self.current_animal]
+  self.anim = Animation:new(self.behavior.anim_params)
 end
 
 function player:reset()
-  self.x = 63
-  self.y = 63
+  self.behavior = animal_behavior[self.current_animal]
+  self.x = GOAL_X + 8
+  self.y = GOAL_Y + 40
   self.dx = 0
   self.dy = 0
   barks = {}
+  self.anim = Animation:new(self.behavior.anim_params)
 end
 

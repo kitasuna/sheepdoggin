@@ -1,6 +1,9 @@
 MAP_WIDTH = 48*8
 MAP_HEIGHT = 28*8
 
+GOAL_X = (22+1)*8
+GOAL_Y = 8
+
 game = {}
 
 function game:init()
@@ -14,8 +17,8 @@ function game:init()
   player:init()
   enemy = Enemy:new()
   level = Level:new()
-  level:setGoal((22+1)*8,
-    8,
+  level:setGoal(GOAL_X,
+    GOAL_Y,
     (4-2)*8,
     8
   )
