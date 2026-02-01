@@ -49,7 +49,7 @@ function draw_game()
   palt(0,false)
   sheep_mgr:draw()
   palt(0,true)
-  _draw_animation()
+  --_draw_animation()
   print("cpu: " .. stat(1),0,10)
 
 end

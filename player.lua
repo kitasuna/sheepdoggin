@@ -6,7 +6,11 @@ animal_behavior = {
     max_dx = 1,
     max_dy = 1,
     waddle = 0,
-    sprite = 129,
+    sprite = {
+      topLeft = 45,
+      w = 2,
+      h = 2,
+    },
     friction = 0.85,
     flop = 0,
     text = "bark",
@@ -17,7 +21,11 @@ animal_behavior = {
     max_dx = 2,
     max_dy = 2,
     waddle = 0,
-    sprite = 130,
+    sprite = {
+      topLeft = 9,
+      w = 2,
+      h = 1,
+    },
     friction = 0.85,
     flop = 0,
     text = "squeak",
@@ -28,7 +36,11 @@ animal_behavior = {
     max_dx = 0.75,
     max_dy = 0.75,
     waddle = 0.6,
-    sprite = 131,
+    sprite = {
+      topLeft = 1,
+      w = 1,
+      h = 2,
+    },
     friction = 0.85,
     flop = 0,
     text = "quack",
@@ -39,7 +51,11 @@ animal_behavior = {
     max_dx = 3,
     max_dy = 3,
     waddle = 0,
-    sprite = 132,
+    sprite = {
+      topLeft = 41,
+      w = 2,
+      h = 1,
+    },
     friction = 0.97,
     flop = 0.2,
     text = "flop",
@@ -124,6 +140,13 @@ function player:update()
 end
 
 function player:draw()
+    spr(
+      self.behavior.sprite.topLeft,
+      self.x,
+      self.y,
+      self.behavior.sprite.w,
+      self.behavior.sprite.h
+    )
     for bark in all(barks) do
         bark:draw()
     end
