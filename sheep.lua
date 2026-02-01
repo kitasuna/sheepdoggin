@@ -141,12 +141,12 @@ function new_sheep(x, y)
       -- NOTE: This relies on palette settings set in SheepMgr.
       spr(self.sprite.topLeft,
         self.pos.x - self.sprite.w * 8 / 2,
-        self.pos.y - self.sprite.h * 8 + self.hops[self.hop_index],
+        self.pos.y - self.sprite.h * 8 + self.radius + self.hops[self.hop_index],
         self.sprite.w, self.sprite.h,
         self.flip_x
       )
        if self.state == SheepState.Nibble then
-         print("yum", self.pos.x - self.sprite.w * 8 / 2 - 3, self.pos.y - self.sprite.h * 8 - 7, 3)
+         print("yum", self.pos.x - self.sprite.w * 8 / 2 + 1, self.pos.y - self.sprite.h * 8, 3)
        end
     end,
     update = function(self, dt)
@@ -202,9 +202,9 @@ function sheep_state_walk(sheep, dt)
   end
 
   if remaining.x < 0 then
-    sheep.flip_x = false
-  else
     sheep.flip_x = true
+  else
+    sheep.flip_x = false
   end
 end
 
