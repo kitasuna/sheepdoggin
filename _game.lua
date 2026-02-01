@@ -8,6 +8,7 @@ GOAL_Y = 8
 game = {}
 
 function game:init()
+  total_sheep = {}
   _now = time()
   _last_ts = _now
   music(0)
