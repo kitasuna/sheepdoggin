@@ -25,19 +25,20 @@ _last_ts = 0
 
 -- main
 function _init()
+  current_gamestate = title
   printh("--init")
-  init_game()
+  --init_game()
 end
 
 function _update60()
   _now = time()
   local dt = _now - _last_ts
-  __update(dt)
+  current_gamestate:update(dt)
   _last_ts = _now
 end
 
 function _draw()
-  __draw()
+  current_gamestate:draw()
 end
 __gfx__
 00000000888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888

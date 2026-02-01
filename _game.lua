@@ -1,7 +1,9 @@
 MAP_WIDTH = 128
 MAP_HEIGHT = 128
 
-function init_game()
+game = {}
+
+function game:init()
   _now = time()
   _last_ts = _now
 
@@ -17,7 +19,7 @@ function init_game()
   _init_animation()
 end
 
-function update_game(dt)
+function game:update(dt)
   player:update()
   sheep_mgr:update(dt)
   -- enemy:update()
@@ -57,7 +59,7 @@ function update_game(dt)
   _update_animation()
 end
 
-function draw_game()
+function game:draw()
   _camera_draw()
   player:draw()
   enemy:draw()
