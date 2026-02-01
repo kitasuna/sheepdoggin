@@ -4,6 +4,7 @@ function SheepMgr:new(o)
     sheep = {},
     sound_timer = rnd(5),
     clearedSheep = {},
+    evac_sound_timer = 0,
   }
   setmetatable(o, self)
   self.__index = self
@@ -16,6 +17,14 @@ function SheepMgr:update(dt)
   if self.sound_timer <= 0 then
     sfx(63)
     self.sound_timer = rnd(20)
+  end
+  
+  if self.evac_sound_timer > 0 then
+    self.evac_sound_timer -= dt
+    if self.evac_sound_timer <= 0 then
+      sfx(-1, 3)  -- stop sound on channel 3 only
+      self.evac_sound_timer = 0
+    end
   end
   
   for i, sheep in pairs(self.sheep) do
@@ -141,12 +150,12 @@ function new_sheep(x, y)
       -- NOTE: This relies on palette settings set in SheepMgr.
       spr(self.sprite.topLeft,
         self.pos.x - self.sprite.w * 8 / 2,
-        self.pos.y - self.sprite.h * 8 + self.hops[self.hop_index],
+        self.pos.y - self.sprite.h * 8 + self.radius + self.hops[self.hop_index],
         self.sprite.w, self.sprite.h,
         self.flip_x
       )
        if self.state == SheepState.Nibble then
-         print("yum", self.pos.x - self.sprite.w * 8 / 2 - 3, self.pos.y - self.sprite.h * 8 - 7, 3)
+         print("yum", self.pos.x - self.sprite.w * 8 / 2 + 1, self.pos.y - self.sprite.h * 8, 3)
        end
     end,
     update = function(self, dt)
@@ -202,9 +211,9 @@ function sheep_state_walk(sheep, dt)
   end
 
   if remaining.x < 0 then
-    sheep.flip_x = false
-  else
     sheep.flip_x = true
+  else
+    sheep.flip_x = false
   end
 end
 
@@ -224,7 +233,11 @@ function sheep_to_evac(sheep)
     sheep.pos.x,
     -32
   )
-  sfx(61)
+  
+  if sheep_mgr.evac_sound_timer <= 0 then
+    sfx(61, 3)  -- play on channel 3 so that we can controll it
+  end
+  sheep_mgr.evac_sound_timer = 1
   add(sheep_mgr.clearedSheep, sheep)
   del(sheep_mgr.sheep, sheep)
   sheep.state_f = sheep_state_evac

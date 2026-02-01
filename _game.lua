@@ -17,6 +17,7 @@ function game:init()
     (4-2)*8,
     8
   )
+  transition = Transition:new()
 
   --__update = update_title
   --__draw = draw_title
@@ -28,13 +29,13 @@ end
 function game:update(dt)
   player:update()
   sheep_mgr:update(dt)
-  if (#sheep_mgr.sheep <= 0) and (#sheep_mgr.clearedSheep >= 1) then
+  if not transition.active and (#sheep_mgr.sheep <= 0) and (#sheep_mgr.clearedSheep >= 1) and player.mask == "fish" then
       current_gamestate = victory
   end
   if (#sheep_mgr.sheep <= 0) and (#sheep_mgr.clearedSheep <= 0) then
       current_gamestate = gameover
   end
-  -- enemy:update()
+  enemy:update()
   --_camera_update()
   --_update_animation()
 
@@ -74,9 +75,15 @@ function game:update(dt)
       sheep_to_evac(sheep)
     end
   end
+  
+  -- start transition when all sheep reach goal
+  if #sheep_mgr.sheep == 0 and #sheep_mgr.clearedSheep > 0 and not transition.active then
+    transition:start()
+  end
 
   physics:resolveCollisions(merge(sheep_mgr.sheep, {player, enemy}))
   _update_animation()
+  transition:update()
 end
 
 function game:draw()
@@ -89,6 +96,7 @@ function game:draw()
   palt(0,true)
   --_draw_animation()
   print("cpu: " .. stat(1),0,10)
+  transition:draw()
 end
 
 function merge(t0, t1)

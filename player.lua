@@ -223,3 +223,24 @@ function new_bark(x, y, w, h, dx, dy)
     return b
 end
 
+function player:nextAnimal()
+  if self.mask == "dog" then
+    self.mask = "mouse"
+  elseif self.mask == "mouse" then
+    self.mask = "duck"
+  elseif self.mask == "duck" then
+    self.mask = "fish"
+  elseif self.mask == "fish" then
+    self.mask = "dog"
+  end
+  self.behavior = animal_behavior[self.mask]
+end
+
+function player:reset()
+  self.x = 63
+  self.y = 63
+  self.dx = 0
+  self.dy = 0
+  barks = {}
+end
+
