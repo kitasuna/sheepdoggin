@@ -143,6 +143,10 @@ function player:update()
 end
 
 function player:draw()
+    local previousPalette = exportPalette()
+    palt(0, false)
+    palt(8, true)
+    -- TODO: Add sprite flipping.
     spr(
       self.behavior.sprite.topLeft,
       self.x - self.behavior.sprite.w * 8 / 2,
@@ -154,6 +158,7 @@ function player:draw()
         bark:draw()
     end
     print(player.mask, 0, 0, 3)
+    importPalette(previousPalette)
 end
 
 function player:collisionCirc()

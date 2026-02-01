@@ -15,6 +15,7 @@ poke(0x5f2e, 1)
 #include physics.lua
 #include camerafollow.lua
 #include animation.lua
+#include utils.lua
 
 -- globals for controlling time stuff
 _now = 0
