@@ -27,9 +27,14 @@ function SheepMgr:spawn()
 end
 
 function SheepMgr:draw()
+  local previousPalette = exportPalette()
+  palt(0, false)
+  palt(8, true)
+  -- TODO: Draw these in Y order so that they can overlap.
   for i, sheep in pairs(self.sheep) do
     sheep:draw() 
   end
+  importPalette(previousPalette)
 end
 
 SheepState = {
@@ -42,6 +47,12 @@ SheepState = {
 function new_sheep(x, y) 
   return {
     pos = v2(x,y),
+    radius = 5,
+    sprite = {
+      topLeft = 11,
+      w = 2,
+      h = 2,
+    },
     vel = v2(0,0),
     tgt_pos = nil,
     req_pos = v2(0,0),
@@ -54,7 +65,7 @@ function new_sheep(x, y)
     state = SheepState.Wait,
     state_ttl = rnd(3),
     collisionCirc = function(self)
-      return Circ.fromCenterRadius(self.pos:add(v2(4,4)),4)
+      return Circ.fromCenterRadius(self.pos, self.radius)
     end,
     intention = function(self)
       if self.tgt_pos == nil then
@@ -107,17 +118,16 @@ function new_sheep(x, y)
       end
     end,
     draw = function(self)
-      palt(14, true)
-      spr(144,
-        self.pos.x,
-        self.pos.y + self.hops[self.hop_index],
-        1,1,
+      -- NOTE: This relies on palette settings set in SheepMgr.
+      spr(self.sprite.topLeft,
+        self.pos.x - self.sprite.w * 8 / 2,
+        self.pos.y - self.sprite.h * 8 + self.hops[self.hop_index],
+        self.sprite.w, self.sprite.h,
         self.flip_x
       )
        if self.state == SheepState.Nibble then
-        print("yum", self.pos.x-3, self.pos.y-7, 3)
+         print("yum", self.pos.x - self.sprite.w * 8 / 2 - 3, self.pos.y - self.sprite.h * 8 - 7, 3)
        end
-      palt(14, false)
     end,
     update = function(self, dt)
       -- do current state actions
