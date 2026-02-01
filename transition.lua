@@ -37,6 +37,9 @@ function Transition:update()
     -- respawn sheep for next level
     sheep_mgr.clearedSheep = {}
     sheep_mgr:spawn()
+    -- reset enemy spawn
+    enemy.spawn_timer = 5
+    enemy.spawned = false
   end
 end
 
