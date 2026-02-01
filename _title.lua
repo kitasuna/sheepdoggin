@@ -17,7 +17,7 @@ function title:draw()
     -- print("sheepdoggin'!", 37, 37, 3)
     rectfill(0,0,128,128,8)
     map(75,9,8,12,14,11)
-    print("\^o9ffpress \151 or \142", 38, 96, 3)
+    print("\^o9ffpress \151 or \142 to bark", 22, 96, 3)
 end
 
 -- lose stuff
