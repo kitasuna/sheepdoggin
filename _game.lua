@@ -6,6 +6,7 @@ game = {}
 function game:init()
   _now = time()
   _last_ts = _now
+  music(0)
 
   sheep_mgr = SheepMgr:new()
   sheep_mgr:spawn()
@@ -32,9 +33,11 @@ function game:update(dt)
   sheep_mgr:update(dt)
   if not transition.active and (#sheep_mgr.sheep <= 0) and (#sheep_mgr.clearedSheep >= 1) and player.mask == "duck" then
       current_gamestate = victory
+      current_gamestate:init()
   end
   if (#sheep_mgr.sheep <= 0) and (#sheep_mgr.clearedSheep <= 0) then
       current_gamestate = gameover
+      current_gamestate:init()
   end
   enemy:update()
   --_camera_update()

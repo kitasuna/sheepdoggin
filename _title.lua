@@ -2,6 +2,7 @@
 title = {}
 
 function title:init()
+  music(42)
 end
 
 function title:update(dt)
@@ -23,7 +24,7 @@ end
 -- lose stuff
 gameover = {}
 function gameover:init()
-
+  music(32)
 end
 
 function gameover:update(dt)
@@ -47,6 +48,7 @@ end
 -- win stuff
 victory = {}
 function victory:init()
+  music(-1,4000)
 end
 
 function victory:update(dt)
