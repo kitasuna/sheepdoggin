@@ -112,18 +112,7 @@ function player:update()
       self.dy += rnd(self.behavior.waddle)
       self.dy -= rnd(self.behavior.waddle)
   end
-  if btnp(4) then
-      if self.mask == "dog" then
-          self.mask = "mouse"
-      elseif self.mask == "mouse" then
-          self.mask = "fish"
-      elseif self.mask == "fish" then
-          self.mask = "duck"
-      elseif self.mask == "duck" then
-          self.mask = "dog"
-      end
-  end
-  if btnp(5) then
+  if btnp(4) or btnp(5) then
     if self.behavior.sfx_id then
       sfx(self.behavior.sfx_id)
     end
@@ -266,7 +255,7 @@ function player:nextAnimal()
     self.current_animal = "fish"
   elseif self.current_animal == "fish" then
     self.current_animal = "duck"
-  elseif self.current_animal == "dog" then
+  elseif self.current_animal == "duck" then
     current_gamestate = victory
   end
   self.behavior = animal_behavior[self.current_animal]
