@@ -30,7 +30,6 @@ _last_ts = 0
 function _init()
   current_gamestate = title
   current_gamestate:init()
-  printh("--init")
   --init_game()
 end
 

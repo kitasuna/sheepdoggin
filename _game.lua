@@ -99,7 +99,7 @@ function game:draw()
   -- level:draw()
   palt(0,true)
   --_draw_animation()
-  print("cpu: " .. stat(1),0,10)
+  --print("cpu: " .. stat(1),0,10)
   transition:draw()
 end
 

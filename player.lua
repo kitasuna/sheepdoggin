@@ -170,7 +170,6 @@ function player:draw()
     for bark in all(barks) do
         bark:draw()
     end
-    print(player.current_animal, 0, 0, 3)
     importPalette(previousPalette)
 end
 

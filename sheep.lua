@@ -110,7 +110,6 @@ function new_sheep(x, y)
         self.tgt_pos:sub(self.pos).x * step,
         self.tgt_pos:sub(self.pos).y * step
       )
-      -- printh("Tried to move "..delta.x..", "..delta.y)
       return self.req_pos
     end,
     resolve = function(self, delta)
@@ -127,7 +126,6 @@ function new_sheep(x, y)
 
       local remaining = self.pos:sub(delta)
       if abs(remaining.x) <= 1 and abs(remaining.y) <=1 then
-        -- printh("Arrived!")
         self.state = SheepState.Wait
         self.state_f = sheep_state_wait
         self.state_ttl = rnd(2)
