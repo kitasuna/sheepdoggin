@@ -238,7 +238,6 @@ function sheep_to_evac(sheep)
     sfx(61, 3)  -- play on channel 3 so that we can controll it
   end
   sheep_mgr.evac_sound_timer = 1
-  
   add(sheep_mgr.clearedSheep, sheep)
   del(sheep_mgr.sheep, sheep)
   sheep.state_f = sheep_state_evac
