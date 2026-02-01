@@ -14,6 +14,9 @@ function Enemy:new(o)
     },
     speed = 0.8,
     target_sheep = nil,
+    confused_timer = 0,
+    confused_dx = 0,
+    confused_dy = 0,
   }
   setmetatable(o, self)
   self.__index = self
@@ -22,6 +25,11 @@ function Enemy:new(o)
 end
 
 function Enemy:update()
+    -- decrease confused timer
+    if self.confused_timer > 0 then
+      self.confused_timer -= 1/30
+    end
+    
     -- find closest sheep
     local closest_dist = 9999
     self.target_sheep = nil
@@ -34,8 +42,12 @@ function Enemy:update()
       end
     end
     
-    -- move towards target sheep
-    if self.target_sheep then
+    -- move towards target sheep or randomly if confused
+    if self.confused_timer > 0 then
+      -- run confusedly
+      self.dx = self.confused_dx
+      self.dy = self.confused_dy
+    elseif self.target_sheep then
       local dx = self.target_sheep.pos.x - self.x
       local dy = self.target_sheep.pos.y - self.y
       
@@ -63,6 +75,19 @@ function Enemy:update()
         del(sheep_mgr.sheep, sheep)
         sfx(55)
         break
+      end
+    end
+    
+    -- check collision with barks
+    for i, bark in pairs(barks) do
+      if enemy_circ:collides(bark:collisionCirc()) then
+        if self.confused_timer <= 0 then
+          -- set new random direction only when first confused
+          local angle = rnd(1)
+          self.confused_dx = cos(angle) * self.speed * 3
+          self.confused_dy = sin(angle) * self.speed * 3
+        end
+        self.confused_timer = 1.5
       end
     end
 end
