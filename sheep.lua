@@ -2,6 +2,7 @@ SheepMgr = {}
 function SheepMgr:new(o)
   o = o or {
     sheep = {},
+    sound_timer = rnd(5),
   }
   setmetatable(o, self)
   self.__index = self
@@ -9,6 +10,13 @@ function SheepMgr:new(o)
 end
 
 function SheepMgr:update(dt)
+  -- sound timer
+  self.sound_timer -= dt
+  if self.sound_timer <= 0 then
+    sfx(63)
+    self.sound_timer = rnd(20)
+  end
+  
   for i, sheep in pairs(self.sheep) do
     sheep:update(dt) 
   end
