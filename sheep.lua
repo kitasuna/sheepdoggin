@@ -224,6 +224,7 @@ function sheep_to_evac(sheep)
     sheep.pos.x,
     -32
   )
+  sfx(61)
   add(sheep_mgr.clearedSheep, sheep)
   del(sheep_mgr.sheep, sheep)
   sheep.state_f = sheep_state_evac
