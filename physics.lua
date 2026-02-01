@@ -30,6 +30,11 @@ function Circ:collidesRect(rectTopLeft, rectBottomRight)
   )
 
   local delta = self.center - closest_point
+  if abs(delta.x) > 64
+    or abs(delta.y) > 64 
+    then
+    return false
+  end
 
   return delta.x^2 + delta.y^2 <= self.radius^2
 end

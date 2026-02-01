@@ -30,10 +30,10 @@ end
 
 function SheepMgr:spawn()
   -- add(self.sheep, new_sheep(32, 32))
-  for i=10,110,7 do
-    for j=20,110,7 do
+  for i=10,(45*8),7 do
+    for j=20,(25*8),7 do
       local decision = rnd()
-      if decision >= 0.9 and #self.sheep < 20 then
+      if decision >= 0.99 and #self.sheep < 20 then
         add(self.sheep, new_sheep(i+rnd(3),j+rnd(3)))
       end
     end
