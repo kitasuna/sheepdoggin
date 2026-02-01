@@ -30,7 +30,7 @@ end
 function game:update(dt)
   player:update()
   sheep_mgr:update(dt)
-  if not transition.active and (#sheep_mgr.sheep <= 0) and (#sheep_mgr.clearedSheep >= 1) and player.mask == "fish" then
+  if not transition.active and (#sheep_mgr.sheep <= 0) and (#sheep_mgr.clearedSheep >= 1) and player.mask == "duck" then
       current_gamestate = victory
   end
   if (#sheep_mgr.sheep <= 0) and (#sheep_mgr.clearedSheep <= 0) then

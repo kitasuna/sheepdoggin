@@ -226,9 +226,23 @@ function new_bark(x, y, w, h, dx, dy)
     local b = {
         x=x, y=y, dx=dx, dy=dy, w=w, h=h,
         time = 40,
+        radius = 4,
         update = bark_update,
         text = player.behavior.text,
-        draw = bark_draw
+        draw = bark_draw,
+        collisionCirc = function(self)
+          return Circ.fromCenterRadius(v2(self.x, self.y), self.radius)
+        end,
+        intention = function(self)
+          return v2(self.dx, self.dy)
+        end,
+        resolve = function(self, delta)
+          if abs(delta.x) <= 0.2 and abs(delta.y) <= 0.2 then
+            return
+          end
+          self.x += delta.x
+          self.y += delta.y
+        end
     }
     add(barks, b)
     return b
