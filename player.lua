@@ -244,3 +244,24 @@ function new_bark(x, y, w, h, dx, dy)
     return b
 end
 
+function player:nextAnimal()
+  if self.current_animal == "dog" then
+    self.current_animal = "mouse"
+  elseif self.current_animal == "mouse" then
+    self.current_animal = "duck"
+  elseif self.current_animal == "duck" then
+    self.current_animal = "fish"
+  elseif self.current_animal == "fish" then
+    self.current_animal = "dog"
+  end
+  self.behavior = animal_behavior[self.current_animal]
+end
+
+function player:reset()
+  self.x = 63
+  self.y = 63
+  self.dx = 0
+  self.dy = 0
+  barks = {}
+end
+
