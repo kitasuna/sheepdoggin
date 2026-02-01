@@ -112,18 +112,7 @@ function player:update()
       self.dy += rnd(self.behavior.waddle)
       self.dy -= rnd(self.behavior.waddle)
   end
-  if btnp(4) then
-      if self.current_animal == "dog" then
-          self.current_animal = "mouse"
-      elseif self.current_animal == "mouse" then
-          self.current_animal = "duck"
-      elseif self.current_animal == "duck" then
-          self.current_animal = "fish"
-      elseif self.current_animal == "fish" then
-          self.current_animal = "dog"
-      end
-  end
-  if btnp(5) then
+  if btnp(4) or btnp(5) then
     if self.behavior.sfx_id then
       sfx(self.behavior.sfx_id)
     end
