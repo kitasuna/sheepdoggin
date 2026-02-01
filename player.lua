@@ -103,11 +103,13 @@ function player:update()
       self.dx -= rnd(self.behavior.waddle)
   end
   if btn(⬅️) then
+      self.flip_x = true
       self.dx -= self.behavior.acc
       self.dy += rnd(self.behavior.waddle)
       self.dy -= rnd(self.behavior.waddle)
   end
   if btn(➡️) then
+      self.flip_x = false
       self.dx += self.behavior.acc
       self.dy += rnd(self.behavior.waddle)
       self.dy -= rnd(self.behavior.waddle)
@@ -153,15 +155,17 @@ function player:draw()
     local spritePos = self:pos() + self:spriteOffset()
     self.anim:draw(
       spritePos.x,
-      spritePos.y
+      spritePos.y,
+      self.flip_x
     )
     if self.behavior.mask then
       spr(
         self.behavior.mask,
-        spritePos.x + (self.anim.w - 1) * 8,
+        self.flip_x and spritePos.x or (spritePos.x + (self.anim.w - 1) * 8),
         spritePos.y,
         1,
-        1
+        1,
+        self.flip_x
       )
     end
     for bark in all(barks) do
@@ -267,6 +271,7 @@ function player:reset()
   self.behavior = animal_behavior[self.current_animal]
   self.x = GOAL_X + 8
   self.y = GOAL_Y + 40
+  self.flip_x = false
   self.dx = 0
   self.dy = 0
   barks = {}
