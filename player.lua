@@ -252,10 +252,10 @@ function player:nextAnimal()
   if self.current_animal == "dog" then
     self.current_animal = "mouse"
   elseif self.current_animal == "mouse" then
-    self.current_animal = "duck"
-  elseif self.current_animal == "duck" then
     self.current_animal = "fish"
   elseif self.current_animal == "fish" then
+    self.current_animal = "duck"
+  elseif self.current_animal == "dog" then
     current_gamestate = victory
   end
   self.behavior = animal_behavior[self.current_animal]
