@@ -12,6 +12,7 @@ animal_behavior = {
       w = 2,
       h = 2,
     },
+    mask = nil,
     friction = 0.85,
     flop = 0,
     text = "bark",
@@ -29,6 +30,7 @@ animal_behavior = {
       w = 2,
       h = 1,
     },
+    mask = 16,
     friction = 0.85,
     flop = 0,
     text = "squeak",
@@ -46,6 +48,7 @@ animal_behavior = {
       w = 1,
       h = 2,
     },
+    mask = 16,
     friction = 0.85,
     flop = 0,
     text = "quack",
@@ -63,6 +66,7 @@ animal_behavior = {
       w = 2,
       h = 1,
     },
+    mask = 16,
     friction = 0.97,
     flop = 0.2,
     text = "flop",
@@ -75,7 +79,7 @@ STARTING_ANIMAL = "dog"
 
 player = {}
 function player:init()
-  self.mask = STARTING_ANIMAL
+  self.current_animal = STARTING_ANIMAL
   self.behavior = animal_behavior[STARTING_ANIMAL]
   self.x = 63
   self.y = 63
@@ -109,14 +113,14 @@ function player:update()
       self.dy -= rnd(self.behavior.waddle)
   end
   if btnp(4) then
-      if self.mask == "dog" then
-          self.mask = "mouse"
-      elseif self.mask == "mouse" then
-          self.mask = "duck"
-      elseif self.mask == "duck" then
-          self.mask = "fish"
-      elseif self.mask == "fish" then
-          self.mask = "dog"
+      if self.current_animal == "dog" then
+          self.current_animal = "mouse"
+      elseif self.current_animal == "mouse" then
+          self.current_animal = "duck"
+      elseif self.current_animal == "duck" then
+          self.current_animal = "fish"
+      elseif self.current_animal == "fish" then
+          self.current_animal = "dog"
       end
   end
   if btnp(5) then
@@ -149,7 +153,7 @@ function player:update()
   self.dx = mid(-self.behavior.max_dx, self.dx, self.behavior.max_dx)
   self.dy = mid(-self.behavior.max_dy, self.dy, self.behavior.max_dy)
   -- dx and dy are applied in :resolve
-  self.behavior = animal_behavior[self.mask]
+  self.behavior = animal_behavior[self.current_animal]
 end
 
 function player:draw()
@@ -157,23 +161,40 @@ function player:draw()
     palt(0, false)
     palt(8, true)
     -- TODO: Add sprite flipping.
+    local spritePos = self:pos() + self:spriteOffset()
     spr(
       self.behavior.sprite.topLeft,
-      self.x - self.behavior.sprite.w * 8 / 2,
-      self.y - self.behavior.sprite.h * 8 + 4,
+      spritePos.x,
+      spritePos.y,
       self.behavior.sprite.w,
       self.behavior.sprite.h
     )
+    if self.behavior.mask then
+      spr(
+        self.behavior.mask,
+        spritePos.x + (self.behavior.sprite.w - 1) * 8,
+        spritePos.y,
+        1,
+        1
+      )
+    end
     for bark in all(barks) do
         bark:draw()
     end
-    print(player.mask, 0, 0, 3)
+    print(player.current_animal, 0, 0, 3)
     importPalette(previousPalette)
 end
 
+function player:spriteOffset()
+  return v2(-self.behavior.sprite.w * 8 / 2, -self.behavior.sprite.h * 8 + 4)
+end
+
+function player:pos()
+    return v2(self.x, self.y)
+end
+
 function player:collisionCirc()
-    local pos = v2(self.x, self.y)
-    return Circ.fromCenterRadius(pos, self.behavior.radius)
+    return Circ.fromCenterRadius(self:pos(), self.behavior.radius)
 end
 
 function player:influenceCirc()
@@ -225,17 +246,16 @@ function new_bark(x, y, w, h, dx, dy)
 end
 
 function player:nextAnimal()
-  if self.mask == "dog" then
-    self.mask = "mouse"
-  elseif self.mask == "mouse" then
-    self.mask = "fish"
-  elseif self.mask == "fish" then
-    self.mask = "duck"
-  elseif self.mask == "duck" then
+  if self.current_animal == "dog" then
+    self.current_animal = "mouse"
+  elseif self.current_animal == "mouse" then
+    self.current_animal = "duck"
+  elseif self.current_animal == "duck" then
+    self.current_animal = "fish"
+  elseif self.current_animal == "fish" then
     current_gamestate = victory
   end
-
-  self.behavior = animal_behavior[self.mask]
+  self.behavior = animal_behavior[self.current_animal]
 end
 
 function player:reset()
