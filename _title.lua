@@ -36,14 +36,18 @@ end
 function gameover:draw()
     camera()
     cls()
-    print("game over ;_;", 37, 37, 3)
-    print("restart", 50, 80, 3) 
+    rectfill(0,0,128,128,8)
+    print("\^o9ffdespite your best efforts", 15, 5, 3)
+    print("\^o9ffthe fox pulled the wool", 19, 15, 3)
+    print("\^o9ffover your eyes", 38, 25, 3)
+    print("\^o9ffback to title?", 38, 110, 3)
+    print("\^o9ffpress \151 or \142", 38, 120, 3)
+    cls
 end
 
 -- win stuff
 victory = {}
 function victory:init()
-
 end
 
 function victory:update(dt)
@@ -56,6 +60,10 @@ end
 function victory:draw()
     camera()
     cls()
-    print("you win!", 37, 37, 3)
-    print("restart", 50, 80, 3) 
+    rectfill(0,0,128,128,8)
+    print("\^o9ffthe sheepdog soul", 30, 5, 3)
+    print("\^o9ffburns bright within you", 20, 15, 3)
+    print("\^o9ffyou herded "..#sheep_mgr.clearedSheep.."\^o9ff sheep", 30, 37, 3)
+    print("\^o9ffback to title?", 38, 110, 3)
+    print("\^o9ffpress \151 or \142", 38, 120, 3)
 end
