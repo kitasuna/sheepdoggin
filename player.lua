@@ -231,7 +231,8 @@ function player:nextAnimal()
   elseif self.mask == "duck" then
     self.mask = "fish"
   elseif self.mask == "fish" then
-    self.mask = "dog"
+    --self.mask = "dog"
+    current_gamestate = victory
   end
   self.behavior = animal_behavior[self.mask]
 end
