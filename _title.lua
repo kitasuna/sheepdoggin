@@ -12,6 +12,7 @@ function title:update(dt)
 end
 
 function title:draw()
+    camera()
     cls()
     print("sheepdoggin'!", 37, 37, 3)
     print("start", 50, 80, 3)
@@ -31,6 +32,7 @@ function gameover:update(dt)
 end
 
 function gameover:draw()
+    camera()
     cls()
     print("game over ;_;", 37, 37, 3)
     print("restart", 50, 80, 3) 
@@ -50,6 +52,7 @@ function victory:update(dt)
 end
 
 function victory:draw()
+    camera()
     cls()
     print("you win!", 37, 37, 3)
     print("restart", 50, 80, 3) 
