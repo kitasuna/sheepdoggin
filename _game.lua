@@ -1,5 +1,6 @@
 MAP_WIDTH = 48*8
 MAP_HEIGHT = 28*8
+total_sheep = {}
 
 game = {}
 

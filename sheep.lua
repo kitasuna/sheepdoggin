@@ -237,6 +237,7 @@ function sheep_to_evac(sheep)
   end
   sheep_mgr.evac_sound_timer = 1
   add(sheep_mgr.clearedSheep, sheep)
+  add(total_sheep, sheep)
   del(sheep_mgr.sheep, sheep)
   sheep.state_f = sheep_state_evac
 end
