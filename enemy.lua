@@ -57,9 +57,9 @@ function Enemy:update()
     end
     
     -- check collision with sheep
+    local enemy_circ = self:collisionCirc()
     for i, sheep in pairs(sheep_mgr.sheep) do
-      local dist = sqrt((sheep.pos.x - self.x)^2 + (sheep.pos.y - self.y)^2)
-      if dist < 8 then  -- collision distance
+      if enemy_circ:collides(sheep:collisionCirc()) then
         del(sheep_mgr.sheep, sheep)
         sfx(55)
         break
