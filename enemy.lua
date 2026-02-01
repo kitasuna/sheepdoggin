@@ -7,12 +7,14 @@ function Enemy:new(o)
     dx = 0,
     dy = 0,
     radius = 4,
-    sprite = {
-      topLeft = 193,
+    anim = Animation:new{
+      frames = {193, 225},
+      ticks_per_frame = 10,
       w = 2,
       h = 2,
     },
     speed = 0.8,
+    facing_left = false,
     target_sheep = nil,
     confused_timer = 0,
     confused_dx = 0,
@@ -101,6 +103,14 @@ function Enemy:update()
         self.confused_timer = 1.5
       end
     end
+
+    if self.facing_left and self.dx > 0.2 then
+      self.facing_left = false
+    end
+    if not self.facing_left and self.dx < 0.2 then
+      self.facing_left = true
+    end
+    self.anim:update()
 end
 
 function Enemy:draw()
@@ -110,7 +120,7 @@ function Enemy:draw()
   local previousPalette = exportPalette()
   palt(0, false)
   palt(8, true)
-  spr(self.sprite.topLeft, self.x - self.sprite.w * 8 / 2, self.y - self.sprite.h * 8 + self.radius, self.sprite.w, self.sprite.h)
+  self.anim:draw(self.x - self.anim.w * 8 / 2, self.y - self.anim.h * 8 + self.radius, self.facing_left, false)
   importPalette(previousPalette)
 end
 
