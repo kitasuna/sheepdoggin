@@ -16,6 +16,7 @@ animal_behavior = {
     flop = 0,
     text = "bark",
     sound = 2,
+    sfx_id = 62,
   },
   mouse = {
     acc = 0.5,
@@ -32,6 +33,7 @@ animal_behavior = {
     flop = 0,
     text = "squeak",
     sound = 1,
+    sfx_id = 58,
   },
   duck = {
     acc = 0.15,
@@ -48,6 +50,7 @@ animal_behavior = {
     flop = 0,
     text = "quack",
     sound = 2,
+    sfx_id = 56,
   },
   fish = {
     acc = 0.10,
@@ -64,6 +67,7 @@ animal_behavior = {
     flop = 0.2,
     text = "flop",
     sound = 0.1,
+    sfx_id = 57,
   },
 }
 
@@ -114,7 +118,12 @@ function player:update()
           self.mask = "dog"
       end
   end
-  if (btnp(5)) new_bark(self.x + self.dx, self.y + self.dy, 4, 4, self.behavior.sound*self.dx, self.behavior.sound*self.dy)
+  if btnp(5) then
+    if self.behavior.sfx_id then
+      sfx(self.behavior.sfx_id)
+    end
+    new_bark(self.x + self.dx, self.y + self.dy, 4, 4, self.behavior.sound*self.dx, self.behavior.sound*self.dy)
+  end
   local i, j=1, 1
   while(barks[i]) do
       if barks[i]:update() then
