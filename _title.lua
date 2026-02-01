@@ -42,7 +42,6 @@ function gameover:draw()
     print("\^o9ffover your eyes", 38, 25, 3)
     print("\^o9ffback to title?", 38, 110, 3)
     print("\^o9ffpress \151 or \142", 38, 120, 3)
-    cls
 end
 
 -- win stuff
