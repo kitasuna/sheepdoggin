@@ -10,9 +10,9 @@ function init_game()
   physics = Physics:new()
   enemy = Enemy:new()
   level = Level:new()
-  level:setGoal(52,
+  level:setGoal((22+1)*8,
     8,
-    24,
+    (4-2)*8,
     8
   )
 
