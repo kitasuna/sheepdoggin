@@ -1,5 +1,6 @@
 MAP_WIDTH = 48*8
 MAP_HEIGHT = 28*8
+total_sheep = {}
 
 GOAL_X = (22+1)*8
 GOAL_Y = 8

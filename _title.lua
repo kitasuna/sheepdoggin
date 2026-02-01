@@ -64,7 +64,7 @@ function victory:draw()
     rectfill(0,0,128,128,8)
     print("\^o9ffthe sheepdog soul", 30, 5, 3)
     print("\^o9ffburns bright within you", 20, 15, 3)
-    print("\^o9ffyou herded "..#sheep_mgr.clearedSheep.."\^o9ff sheep", 30, 37, 3)
+    print("\^o9ffyou herded "..#total_sheep.."\^o9ff sheep", 30, 37, 3)
     print("\^o9ffback to title?", 38, 110, 3)
     print("\^o9ffpress \151 or \142", 38, 120, 3)
 end
