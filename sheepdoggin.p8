@@ -20,23 +20,13 @@ poke(0x5f2e, 1)
 _now = 0
 _last_ts = 0
 
+-- NOTE
+-- Try not to add too much code into this file, prefer _game.lua instead.
+
 -- main
 function _init()
   printh("--init")
-
-  _now = time()
-  _last_ts = _now
-
-  sheep_mgr = SheepMgr:new()
-  sheep_mgr:spawn()
-  physics = Physics:new()
-  enemy = Enemy:new()
-
-  --__update = update_title
-  --__draw = draw_title
-  __update = update_game
-  __draw = draw_game
-  _init_animation()
+  init_game()
 end
 
 function _update60()
@@ -44,13 +34,10 @@ function _update60()
   local dt = _now - _last_ts
   __update(dt)
   _last_ts = _now
-  _update_animation()
 end
 
 function _draw()
   __draw()
-  --_camera_draw()
-  --_draw_animation()
 end
 __gfx__
 00000000888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888

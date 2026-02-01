@@ -1,6 +1,22 @@
 MAP_WIDTH = 128
 MAP_HEIGHT = 128
 
+function init_game()
+  _now = time()
+  _last_ts = _now
+
+  sheep_mgr = SheepMgr:new()
+  sheep_mgr:spawn()
+  physics = Physics:new()
+  enemy = Enemy:new()
+
+  --__update = update_title
+  --__draw = draw_title
+  __update = update_game
+  __draw = draw_game
+  _init_animation()
+end
+
 function update_game(dt)
   player:update()
   sheep_mgr:update(dt)
@@ -23,6 +39,7 @@ function update_game(dt)
     end
   end
   physics:resolveCollisions(merge(sheep_mgr.sheep, {player, enemy}))
+  _update_animation()
 end
 
 function draw_game()
