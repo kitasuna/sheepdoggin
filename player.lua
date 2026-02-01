@@ -170,6 +170,7 @@ function player:draw()
     for bark in all(barks) do
         bark:draw()
     end
+    print(player.current_animal, 0, 0, 3)
     importPalette(previousPalette)
 end
 
@@ -249,14 +250,17 @@ end
 
 function player:nextAnimal()
   if self.current_animal == "dog" then
+    --total_sheep += #sheep_mgr.clearedSheep
     self.current_animal = "mouse"
   elseif self.current_animal == "mouse" then
+    --total_sheep += #sheep_mgr.clearedSheep
     self.current_animal = "fish"
   elseif self.current_animal == "fish" then
+    --total_sheep += #sheep_mgr.clearedSheep
     self.current_animal = "duck"
   elseif self.current_animal == "duck" then
+    --total_sheep += #sheep_mgr.clearedSheep
     current_gamestate = victory
-    current_gamestate:init()
   end
   self.behavior = animal_behavior[self.current_animal]
 end
