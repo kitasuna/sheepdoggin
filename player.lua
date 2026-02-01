@@ -113,14 +113,14 @@ function player:update()
       self.dy -= rnd(self.behavior.waddle)
   end
   if btnp(4) then
-      if self.current_animal == "dog" then
-          self.current_animal = "mouse"
-      elseif self.current_animal == "mouse" then
-          self.current_animal = "duck"
-      elseif self.current_animal == "duck" then
-          self.current_animal = "fish"
-      elseif self.current_animal == "fish" then
-          self.current_animal = "dog"
+      if self.mask == "dog" then
+          self.mask = "mouse"
+      elseif self.mask == "mouse" then
+          self.mask = "fish"
+      elseif self.mask == "fish" then
+          self.mask = "duck"
+      elseif self.mask == "duck" then
+          self.mask = "dog"
       end
   end
   if btnp(5) then
@@ -237,9 +237,23 @@ function new_bark(x, y, w, h, dx, dy)
     local b = {
         x=x, y=y, dx=dx, dy=dy, w=w, h=h,
         time = 40,
+        radius = 4,
         update = bark_update,
         text = player.behavior.text,
-        draw = bark_draw
+        draw = bark_draw,
+        collisionCirc = function(self)
+          return Circ.fromCenterRadius(v2(self.x, self.y), self.radius)
+        end,
+        intention = function(self)
+          return v2(self.dx, self.dy)
+        end,
+        resolve = function(self, delta)
+          if abs(delta.x) <= 0.2 and abs(delta.y) <= 0.2 then
+            return
+          end
+          self.x += delta.x
+          self.y += delta.y
+        end
     }
     add(barks, b)
     return b
