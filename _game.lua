@@ -15,7 +15,7 @@ function game:init()
 
   sheep_mgr = SheepMgr:new()
   sheep_mgr:spawn()
-  physics = Physics:new()
+  physics = Physics:new{gridQuanta = 16, mapSize = v2(MAP_WIDTH, MAP_HEIGHT), mapBorder = 8}
   player:init()
   enemy = Enemy:new()
   level = Level:new()

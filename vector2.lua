@@ -23,6 +23,10 @@ v2_meta={
     assert(type(b) == "number")
     return a:scale(1/b)
 	end,
+	__idiv=function(a,b)
+    assert(type(b) == "number")
+    return v2(a.x \ b, a.y \ b)
+	end,
 	__add=function(u,v)
 		return u:add(v)
 	end,

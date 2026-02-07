@@ -110,21 +110,85 @@ function Physics:mapCollision(body, intention)
   local origCirc = body:collisionCirc()
   -- Pretend to apply the body-body collision reaction and start from there.
   local candidatePos = v2(origCirc.center.x, origCirc.center.y) + intention
-  local margin = 8 + origCirc.radius
-  if candidatePos.x < margin then
-    candidatePos.x = margin
-  elseif candidatePos.x > MAP_WIDTH - margin then
-    candidatePos.x = MAP_WIDTH - margin
+  local borderSpacing = self.mapBorder + origCirc.radius
+  if candidatePos.x < borderSpacing then
+    candidatePos.x = borderSpacing
+  elseif candidatePos.x > self.mapSize.x - borderSpacing then
+    candidatePos.x = self.mapSize.x - borderSpacing
   end
 
-  if candidatePos.y < margin then
-    candidatePos.y = margin
-  elseif candidatePos.y > MAP_HEIGHT - margin then
-    candidatePos.y = MAP_HEIGHT - margin
+  if candidatePos.y < borderSpacing then
+    candidatePos.y = borderSpacing
+  elseif candidatePos.y > self.mapSize.y - borderSpacing then
+    candidatePos.y = self.mapSize.y - borderSpacing
   end
 
   -- Find the reaction from all the map collision.
   return candidatePos - origCirc.center
+end
+
+-- Return all grid coordinates (`v2`s) that this circle overlaps.
+function Physics:rasterizeCircle(circ)
+  -- This is an overestimate, but dumb is better for now.
+  local centerOffset = v2(circ.radius, circ.radius)
+  local topLeft = (circ.center - centerOffset) \ self.gridQuanta
+  local bottomRight = (circ.center + centerOffset) \ self.gridQuanta
+  local overlappingCoords = {}
+  for y=topLeft.y,bottomRight.y do
+    for x=topLeft.x,bottomRight.x do
+      add(overlappingCoords, v2(x,y))
+    end
+  end
+  return overlappingCoords
+end
+
+-- Returns a list of pairs of body indices that should be checked for collision.
+function Physics:bodiesThatCanCollideNSquared(bodies)
+  local collisionCandidates = {}
+  for firstBodyI=1,#bodies do
+    for secondBodyI=firstBodyI+1,#bodies do
+      add(collisionCandidates, {firstBodyI, secondBodyI})
+    end
+  end
+  return collisionCandidates
+end
+
+-- Hashes two integer values. Negatives are okay I think.
+function hashPair(a, b)
+  return bor(a, lshr(b, 16))
+end
+
+-- Returns a list of pairs of body indices that should be checked for collision.
+function Physics:bodiesThatCanCollide(bodies)
+  -- Bucket all bodies into grid spaces they overlap with, then only return
+  -- pairs of bodies that share grid spaces.
+
+  -- The buckets to quantize into.
+  local gridBuckets = {}
+  -- The set of collision candidate pairs.
+  local collisionPairSet = {}
+
+  for i=1,#bodies do
+    for coord in all(self:rasterizeCircle(bodies[i]:collisionCirc())) do
+      local hash = hashPair(coord.x, coord.y)
+      if gridBuckets[hash] then
+        for otherI in all(gridBuckets[hash]) do
+          -- otherI will always be smaller, since the index we're considering,
+          -- `i`, is always the highest thus far.
+          collisionPairSet[hashPair(otherI, i)] = {otherI, i}
+        end
+        add(gridBuckets[hash], i)
+      else
+        gridBuckets[hash] = {i}
+      end
+    end
+  end
+
+  local collisionCandidates = {}
+  for _, candidatePair in pairs(collisionPairSet) do
+    add(collisionCandidates, candidatePair)
+  end
+  return collisionCandidates
 end
 
 --[[
@@ -144,23 +208,24 @@ function Physics:resolveCollisions(bodies)
   -- TODO: Maybe group by priority first? Or have the caller pass a list of
   -- lists that are ordered by priority?
   local bodyCollisions = {}
-  for firstBodyI=1,#bodies do
+
+  for collisionCandidate in all(self:bodiesThatCanCollide(bodies)) do
+    local firstBodyI = collisionCandidate[1]
+    local secondBodyI = collisionCandidate[2]
     local firstBody = bodies[firstBodyI]
-    for secondBodyI=firstBodyI+1,#bodies do
-      local secondBody = bodies[secondBodyI]
-      -- TODO: This should add the intentions to the positions before checking
-      -- collision.
-      local collision = Collision.fromBodies(firstBody, secondBody)
-      if collision then
-        if not bodyCollisions[firstBodyI] then
-          bodyCollisions[firstBodyI] = {}
-        end
-        add(bodyCollisions[firstBodyI], collision/2)
-        if not bodyCollisions[secondBodyI] then
-          bodyCollisions[secondBodyI] = {}
-        end
-        add(bodyCollisions[secondBodyI], -collision/2)
+    local secondBody = bodies[secondBodyI]
+    -- TODO: This should add the intentions to the positions before checking
+    -- collision.
+    local collision = Collision.fromBodies(firstBody, secondBody)
+    if collision then
+      if not bodyCollisions[firstBodyI] then
+        bodyCollisions[firstBodyI] = {}
       end
+      add(bodyCollisions[firstBodyI], collision/2)
+      if not bodyCollisions[secondBodyI] then
+        bodyCollisions[secondBodyI] = {}
+      end
+      add(bodyCollisions[secondBodyI], -collision/2)
     end
   end
 

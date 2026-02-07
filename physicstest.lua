@@ -34,7 +34,7 @@ function physicstest:new(o)
 end
 
 function physicstest:init()
-  self.physics = Physics:new()
+  self.physics = Physics:new{gridQuanta = 10, mapSize = v2(128, 128), mapBorder = 0}
   self.player = {
     pos = v2(0,0),
     radius = 10,
@@ -63,9 +63,9 @@ function physicstest:init()
     end,
   }
   self.dummies = {}
-  for x=1,4 do
-    for y=1,4 do
-      add(self.dummies, DummyBody.fromCenterRadius(v2(40+x*8,40+y*8), 4))
+  for x=1,10 do
+    for y=1,10 do
+      add(self.dummies, DummyBody.fromCenterRadius(v2(20+x*8,20+y*8), 4))
     end
   end
 end
@@ -80,6 +80,7 @@ end
 
 function physicstest:draw()
   cls()
+  print("cpu: " .. stat(1), 0, 0)
   spr(1,self.player.pos.x - 4, self.player.pos.y - 4)
   for body in all(self.dummies) do
     local circ = body:collisionCirc()
